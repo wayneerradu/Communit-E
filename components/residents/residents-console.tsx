@@ -575,7 +575,7 @@ export function ResidentsConsole({
       longitude: selectedResident.longitude,
       notes: selectedResident.notes ?? ""
     });
-  }, [selectedResident?.id]);
+  }, [selectedResident]);
 
   useEffect(() => {
     if (!selectedResident?.id || lastViewedResidentIdRef.current === selectedResident.id) {

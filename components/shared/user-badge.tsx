@@ -1,4 +1,5 @@
 import type { SessionUser } from "@/types/domain";
+import Image from "next/image";
 
 function formatStatus(status?: SessionUser["status"]) {
   switch (status) {
@@ -37,7 +38,14 @@ export function UserBadge({
     <div className={`user-badge${compact ? " user-badge-compact" : ""}`}>
       <div className="user-badge-avatar-shell">
         {matchedUser?.avatarImage ? (
-          <img src={matchedUser.avatarImage} alt={`${safeName} avatar`} className="user-badge-avatar-image" />
+          <Image
+            src={matchedUser.avatarImage}
+            alt={`${safeName} avatar`}
+            className="user-badge-avatar-image"
+            width={36}
+            height={36}
+            unoptimized
+          />
         ) : (
           <div className="user-badge-avatar-placeholder">{initials || "NA"}</div>
         )}

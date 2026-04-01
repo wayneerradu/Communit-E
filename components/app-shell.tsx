@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import type { Route } from "next";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -589,7 +590,14 @@ export function AppShell({
         <div className="brand-stack">
           <div className="brand-logo-shell">
             {logoImage ? (
-              <img src={logoImage} alt="CommUNIT-E logo" className="brand-logo-image" />
+              <Image
+                src={logoImage}
+                alt="CommUNIT-E logo"
+                className="brand-logo-image"
+                width={160}
+                height={48}
+                unoptimized
+              />
             ) : (
               <div className="brand-logo-placeholder">CE</div>
             )}
@@ -978,7 +986,14 @@ export function AppShell({
           <small>{profileHeading}</small>
           <div className="profile-avatar-shell">
             {avatarImage ? (
-              <img src={avatarImage} alt={`${user.name} avatar`} className="profile-avatar-image" />
+              <Image
+                src={avatarImage}
+                alt={`${user.name} avatar`}
+                className="profile-avatar-image"
+                width={72}
+                height={72}
+                unoptimized
+              />
             ) : (
               <div className="profile-avatar-placeholder">{initials || "CE"}</div>
             )}
@@ -1084,7 +1099,14 @@ export function AppShell({
             <div className="presence-person-card">
               <div className="profile-avatar-shell">
                 {currentUserDisplay.avatarImage ? (
-                  <img src={currentUserDisplay.avatarImage} alt={`${currentUserDisplay.fullName} avatar`} className="profile-avatar-image" />
+                  <Image
+                    src={currentUserDisplay.avatarImage}
+                    alt={`${currentUserDisplay.fullName} avatar`}
+                    className="profile-avatar-image"
+                    width={56}
+                    height={56}
+                    unoptimized
+                  />
                 ) : (
                   <div className="profile-avatar-placeholder">{initials || "CE"}</div>
                 )}
@@ -1129,7 +1151,14 @@ export function AppShell({
                     <article key={profile.email} className="presence-person-card presence-person-card-row">
                       <div className="profile-avatar-shell presence-person-avatar-shell">
                         {profile.avatarImage ? (
-                          <img src={profile.avatarImage} alt={`${profile.fullName} avatar`} className="profile-avatar-image" />
+                          <Image
+                            src={profile.avatarImage}
+                            alt={`${profile.fullName} avatar`}
+                            className="profile-avatar-image"
+                            width={44}
+                            height={44}
+                            unoptimized
+                          />
                         ) : (
                           <div className="profile-avatar-placeholder">{otherInitials || "NA"}</div>
                         )}

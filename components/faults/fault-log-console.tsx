@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaultSubCategoryDropdown } from "@/components/faults/fault-subcategory-dropdown";
 import { GlobalSearch } from "@/components/shared/global-search";
@@ -358,7 +359,14 @@ export function FaultLogConsole({ initialFaults, residents, currentUser }: Fault
               <div className="fault-media-grid">
                 {form.mediaRefs.map((ref, index) => (
                   <article key={`intake-media-${index}`} className="fault-media-item">
-                    <img src={ref} alt={`Fault intake image ${index + 1}`} />
+                    <Image
+                      src={ref}
+                      alt={`Fault intake image ${index + 1}`}
+                      width={360}
+                      height={220}
+                      unoptimized
+                      style={{ width: "100%", height: "auto" }}
+                    />
                     <button
                       type="button"
                       className="button-secondary"

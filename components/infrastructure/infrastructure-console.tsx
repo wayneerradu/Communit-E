@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useState, type ChangeEvent } from "react";
+import Image from "next/image";
 import { GlobalSearch } from "@/components/shared/global-search";
 import { InfrastructureGlyph, getAssetTypeLabel, infrastructureTypeOptions } from "@/components/infrastructure/infrastructure-map-meta";
 import type { GlobalSearchItem, InfrastructureAsset } from "@/types/domain";
@@ -458,9 +459,12 @@ export function InfrastructureConsole({ initialAssets }: InfrastructureConsolePr
             {photoDataUrl ? (
               <div className="field field-full">
                 <span>Preview</span>
-                <img
+                <Image
                   src={photoDataUrl}
                   alt="Asset upload preview"
+                  width={960}
+                  height={520}
+                  unoptimized
                   style={{ width: "100%", maxHeight: 220, objectFit: "cover", borderRadius: 12, border: "1px solid rgba(17, 48, 63, 0.12)" }}
                 />
               </div>

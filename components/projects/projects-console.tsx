@@ -123,7 +123,7 @@ export function ProjectsConsole({
   const blockedProject = viewProjects.find((project) => project.tasks.some((task) => task.status === "blocked"));
   const featuredProject = viewProjects.find((project) => project.id === selectedProjectId);
   const projectSearchListId = "projects-task-search-list";
-  const tasks = featuredProject?.tasks ?? [];
+  const tasks = useMemo(() => featuredProject?.tasks ?? [], [featuredProject]);
   const kanbanColumns = useMemo(
     () =>
       laneOrder.map((lane) => ({

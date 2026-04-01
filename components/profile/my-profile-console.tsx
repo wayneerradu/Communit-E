@@ -2,6 +2,7 @@
 
 import type { ChangeEvent } from "react";
 import { useEffect, useRef, useState, useTransition } from "react";
+import Image from "next/image";
 
 type ProfileState = {
   fullName: string;
@@ -339,7 +340,14 @@ export function MyProfileConsole({
             <div className="profile-page-avatar-column">
               <label className="profile-page-avatar-shell profile-page-avatar-shell-clickable">
                 {profile.avatarImage ? (
-                  <img src={profile.avatarImage} alt={`${profile.fullName} avatar`} className="profile-page-avatar-image" />
+                  <Image
+                    src={profile.avatarImage}
+                    alt={`${profile.fullName} avatar`}
+                    className="profile-page-avatar-image"
+                    width={128}
+                    height={128}
+                    unoptimized
+                  />
                 ) : (
                   <div className="profile-page-avatar-placeholder">{initials || "CE"}</div>
                 )}

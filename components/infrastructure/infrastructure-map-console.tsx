@@ -149,12 +149,6 @@ export function InfrastructureMapConsole({
     assets[0];
 
   useEffect(() => {
-    if (!selectedAssetId && mappedAssets[0]) {
-      setSelectedAssetId(mappedAssets[0].id);
-    }
-  }, [mappedAssets, selectedAssetId]);
-
-  useEffect(() => {
     let cancelled = false;
 
     void (async () => {

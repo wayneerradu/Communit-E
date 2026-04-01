@@ -28,7 +28,7 @@ function toProjectAgeDays(project: Project) {
 
 export function ProjectsOverviewConsole({ projects }: { projects: Project[] }) {
   const [nudgeIndex, setNudgeIndex] = useState(0);
-  const now = Date.now();
+  const [now] = useState(() => Date.now());
   const tasks = useMemo(() => projects.flatMap((project) => project.tasks.map((task) => ({ task, project }))), [projects]);
   const openProjects = projects.filter((project) => project.status !== "completed" && project.status !== "archived");
   const activeProjects = projects.filter((project) => project.status === "active");
