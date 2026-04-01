@@ -7,18 +7,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
 enum Role {
   SUPER_ADMIN
   ADMIN
-  RESIDENT
   PRO
 }
 
 enum ResidentStatus {
   PENDING
   ACTIVE
-  ARCHIVED
   REJECTED
+  LEAVER
+  ARCHIVED
+}
+
+enum ResidentType {
+  RESIDENT
+  ADMIN
+  STREET_CAPTAIN
+  VOLUNTEER
+  ANIMAL_CARE_VOLUNTEER
+}
+
+enum FaultStatus {
+  ESCALATED
+  IN_PROGRESS
+  CLOSED
+  ARCHIVED
 }
 
 enum FaultPriority {
@@ -28,20 +45,34 @@ enum FaultPriority {
   CRITICAL
 }
 
-enum FaultStatus {
-  REPORTED
-  ASSIGNED
-  IN_PROGRESS
-  FIXED
-  ARCHIVED
+enum EscalationLevel {
+  NONE
+  PLUS
+  PLUSPLUS
 }
 
 enum ProjectStatus {
   PLANNED
   ACTIVE
+  ON_HOLD
   BLOCKED
   COMPLETED
   ARCHIVED
+}
+
+enum ProjectPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TaskStatus {
+  TODO
+  STARTED
+  IN_PROGRESS
+  BLOCKED
+  DONE
 }
 
 enum ParkingLotStatus {
@@ -59,127 +90,415 @@ enum PRCommStatus {
   ARCHIVED
 }
 
+enum ResolutionStatus {
+  OPEN
+  PASSED
+  REJECTED
+  CLOSED
+  REVOTE
+}
+
 enum AssetType {
-  POLE
+  STREETLIGHT_POLE
+  OPTIC_FIBER_POLE
+  ELECTRICAL_SUBSTATION
+  ELECTRICAL_DISTRIBUTION_BOX
+  WATER_METER
+  WATER_VALVE
+  FIRE_HYDRANT
+  TRAFFIC_LIGHT
   MANHOLE
-  TRANSFORMER
-  VALVE
-  HYDRANT
   OTHER
 }
 
-model User {
-  id             String           @id @default(uuid())
-  email          String           @unique
-  name           String
-  passwordHash   String?
-  googleSub      String?          @unique
-  isActive       Boolean          @default(true)
-  role           Role
-  residentStatus ResidentStatus?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+enum AssetCondition {
+  GOOD
+  FAIR
+  POOR
+  CRITICAL
+  UNKNOWN
 }
+
+enum NoteVisibility {
+  INTERNAL
+  PUBLIC_SAFE
+}
+
+enum NoteSource {
+  ADMIN
+  MAILBOX
+  SYSTEM
+}
+
+// ─── Core Identity ─────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String?
+  googleSub    String?  @unique
+  role         Role
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model UserProfile {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  fullName        String
+  nickname        String?
+  bio             String?
+  dateOfBirth     String?
+  physicalAddress String?
+  mobileNumber    String?
+  privateNotes    String?
+  delegateEmail   String?
+  status          String   @default("active")
+  avatarImage     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ─── Road (first-class entity) ────────────────────────────────────────────────
+
+model Road {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  suburb     String   @default("Mount Vernon")
+  city       String   @default("Durban")
+  postalCode String   @default("4094")
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  residents  Resident[]
+  faults     Fault[]
+  assets     InfrastructureAsset[]
+  projects   Project[]
+}
+
+// ─── Residents ────────────────────────────────────────────────────────────────
 
 model Resident {
-  id           String         @id @default(uuid())
-  name         String
-  standNo      String
-  email        String?        @unique
-  phone        String?
-  profilePic   String?
-  addressLine1 String?
-  suburb       String?
-  city         String?
-  ward         String?
-  latitude     Float?
-  longitude    Float?
-  notes        String?
-  status       ResidentStatus
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id                     String         @id @default(uuid())
+  name                   String
+  standNo                String?
+  residentType           ResidentType   @default(RESIDENT)
+  email                  String?        @unique
+  phone                  String?
+  securityCompany        String?
+  status                 ResidentStatus @default(PENDING)
+
+  addressLine1           String?
+  suburb                 String         @default("Mount Vernon")
+  city                   String         @default("Durban")
+  postalCode             String         @default("4094")
+  ward                   String?
+  latitude               Float?
+  longitude              Float?
+  geocodeStatus          String?
+
+  addressVerified        Boolean        @default(false)
+  mobileVerified         Boolean        @default(false)
+  whatsappAdded          Boolean        @default(false)
+  consentAccepted        Boolean        @default(false)
+  submittedViaPublicForm Boolean        @default(false)
+
+  whatsappState          String?
+  whatsappAddedAt        DateTime?
+  whatsappAddedBy        String?
+
+  leaveReason            String?
+  leaveReasonOther       String?
+  leftAt                 DateTime?
+
+  rejectionReason        String?
+  rejectedAt             DateTime?
+
+  profilePic             String?
+  notes                  String?
+
+  roadId                 String?
+  road                   Road?          @relation(fields: [roadId], references: [id])
+
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+
+  faults                 Fault[]
+  history                ResidentHistory[]
 }
+
+model ResidentHistory {
+  id         String   @id @default(uuid())
+  residentId String
+  resident   Resident @relation(fields: [residentId], references: [id])
+  title      String
+  detail     String
+  tone       String?
+  createdAt  DateTime @default(now())
+}
+
+// ─── Faults ───────────────────────────────────────────────────────────────────
 
 model Fault {
-  id                String        @id @default(uuid())
-  title             String
-  description       String
-  reporterEmail     String
-  category          String
-  priority          FaultPriority
-  status            FaultStatus
-  latitude          Float?
-  longitude         Float?
-  locationText      String?
-  photo             String?
-  residentId        String?
-  assignedAdminId   String?
-  municipalityEmail String?
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
+  id                       String          @id @default(uuid())
+  title                    String
+  ethekwiniReference       String?
+  description              String
+  reporterEmail            String
+  category                 String
+  subCategory              String?
+  priority                 FaultPriority   @default(MEDIUM)
+  status                   FaultStatus     @default(ESCALATED)
+
+  locationText             String
+  latitude                 Float?
+  longitude                Float?
+  ward                     String?
+  roadId                   String?
+  road                     Road?           @relation(fields: [roadId], references: [id])
+
+  mediaRefs                String[]        @default([])
+
+  escalationLevel          EscalationLevel @default(NONE)
+  internalEscalated        Boolean         @default(false)
+  externalEscalated        Boolean         @default(false)
+  escalatedAt              DateTime?
+  firstInProgressAt        DateTime?
+  escalationCount          Int             @default(0)
+  reopenCount              Int             @default(0)
+
+  loggedByAdminName        String?
+  loggedByAdminEmail       String?
+  assignedAdminName        String?
+  assignedToEmail          String?
+  assignedAt               DateTime?
+  lastWorkedByEmail        String?
+  lastWorkedAt             DateTime?
+
+  municipalityEmail        String?
+
+  residentId               String?
+  resident                 Resident?       @relation(fields: [residentId], references: [id])
+
+  feedbackStatus           String?
+  feedbackRequestedAt      DateTime?
+  feedbackRequestedByEmail String?
+
+  overrideReason           String?
+  reopenReason             String?
+  reopenedAt               DateTime?
+  closedAt                 DateTime?
+  closedByAdminEmail       String?
+
+  workflowDispatchInitial  String?
+  workflowDispatchPlus     String?
+  workflowDispatchPlusplus String?
+  workflowDispatchReopened String?
+
+  createdAt                DateTime        @default(now())
+  updatedAt                DateTime        @updatedAt
+
+  notes                    FaultNote[]
+  statusHistory            FaultStatusHistory[]
+  escalationHistory        FaultEscalationHistory[]
+  auditLogs                AuditLog[]
 }
 
-model ParkingLot {
-  id            String            @id @default(uuid())
+model FaultNote {
+  id             String         @id @default(uuid())
+  faultId        String
+  fault          Fault          @relation(fields: [faultId], references: [id])
+  body           String
+  authorName     String
+  includeInEmail Boolean        @default(false)
+  visibility     NoteVisibility @default(INTERNAL)
+  source         NoteSource     @default(ADMIN)
+  createdAt      DateTime       @default(now())
+}
+
+model FaultStatusHistory {
+  id      String   @id @default(uuid())
+  faultId String
+  fault   Fault    @relation(fields: [faultId], references: [id])
+  status  String
+  byEmail String?
+  at      DateTime @default(now())
+}
+
+model FaultEscalationHistory {
+  id      String   @id @default(uuid())
+  faultId String
+  fault   Fault    @relation(fields: [faultId], references: [id])
+  level   String
+  byEmail String?
+  at      DateTime @default(now())
+}
+
+// ─── Infrastructure ───────────────────────────────────────────────────────────
+
+model InfrastructureAsset {
+  id                String         @id @default(uuid())
+  assetName         String
+  assetType         AssetType
+  condition         AssetCondition @default(UNKNOWN)
+  status            String         @default("active")
+  verificationState String         @default("unverified")
+  source            String         @default("manual")
+  officialRef       String?
+  street            String
+  ward              String?
+  latitude          Float
+  longitude         Float
+  notes             String?
+  lastVerifiedAt    DateTime?
+
+  roadId            String?
+  road              Road?          @relation(fields: [roadId], references: [id])
+
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  photos            AssetPhoto[]
+  auditLogs         AuditLog[]
+}
+
+model AssetPhoto {
+  id        String              @id @default(uuid())
+  assetId   String
+  asset     InfrastructureAsset @relation(fields: [assetId], references: [id])
+  filePath  String
+  caption   String?
+  createdAt DateTime            @default(now())
+}
+
+// ─── Projects ─────────────────────────────────────────────────────────────────
+
+model Project {
+  id                 String          @id @default(uuid())
+  projectRef         String?         @unique
+  title              String
+  description        String?
+  priority           ProjectPriority @default(MEDIUM)
+  status             ProjectStatus   @default(PLANNED)
+  assignedAdminEmail String?
+  assignedAdminName  String?
+  timelineStart      DateTime?
+  timelineEnd        DateTime?
+  gallery            String[]        @default([])
+
+  roadId             String?
+  road               Road?           @relation(fields: [roadId], references: [id])
+
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  tasks              ProjectTask[]
+  auditLogs          AuditLog[]
+}
+
+model ProjectTask {
+  id            String     @id @default(uuid())
+  taskRef       String?    @unique
+  projectId     String
+  project       Project    @relation(fields: [projectId], references: [id])
   title         String
-  justification String
-  priority      String
-  status        ParkingLotStatus
-  threshold     Int               @default(10)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  description   String?
+  assignee      String?
+  assigneeEmail String?
+  status        TaskStatus @default(TODO)
+  dueDate       DateTime?
+  blockerReason String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+// ─── Resolutions ──────────────────────────────────────────────────────────────
+
+model Resolution {
+  id             String           @id @default(uuid())
+  title          String
+  description    String
+  type           String
+  status         ResolutionStatus @default(OPEN)
+  deadlineAt     DateTime
+  quorumTarget   Int              @default(4)
+  options        String[]
+  createdByEmail String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  votes          ResolutionVote[]
+}
+
+model ResolutionVote {
+  id           String     @id @default(uuid())
+  resolutionId String
+  resolution   Resolution @relation(fields: [resolutionId], references: [id])
+  voterEmail   String
+  choice       String
+  createdAt    DateTime   @default(now())
+
+  @@unique([resolutionId, voterEmail])
+}
+
+// ─── Parking Lot ──────────────────────────────────────────────────────────────
+
+model ParkingLotIdea {
+  id             String           @id @default(uuid())
+  title          String
+  justification  String
+  priority       String           @default("medium")
+  status         ParkingLotStatus @default(OPEN)
+  threshold      Int              @default(10)
+  createdByEmail String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  votes          ParkingLotVote[]
 }
 
 model ParkingLotVote {
-  id           String   @id @default(uuid())
+  id           String         @id @default(uuid())
   parkingLotId String
+  parkingLot   ParkingLotIdea @relation(fields: [parkingLotId], references: [id])
   userEmail    String
-  createdAt    DateTime @default(now())
+  createdAt    DateTime       @default(now())
 
   @@unique([parkingLotId, userEmail])
 }
 
-model Project {
-  id            String        @id @default(uuid())
-  title         String
-  description   String?
-  budget        Decimal?
-  timelineStart DateTime?
-  timelineEnd   DateTime?
-  status        ProjectStatus
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-}
-
-model ProjectTask {
-  id          String   @id @default(uuid())
-  projectId   String
-  title       String
-  description String?
-  assigneeId  String?
-  status      String
-  dueDate     DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
+// ─── PRO / Communications ─────────────────────────────────────────────────────
 
 model PRComm {
-  id          String       @id @default(uuid())
-  headline    String
-  body        String
-  channel     String
-  status      PRCommStatus
-  appCount    Int          @default(0)
-  createdById String?
-  sentById    String?
-  sentAt      DateTime?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id                   String       @id @default(uuid())
+  headline             String
+  body                 String
+  channel              String
+  mediaRefs            String[]     @default([])
+  wordpressPostId      Int?
+  wordpressPostUrl     String?
+  wordpressCategory    String?
+  wordpressStatus      String?
+  wordpressPublishedAt DateTime?
+  status               PRCommStatus @default(DRAFT)
+  appCount             Int          @default(0)
+  createdByEmail       String?
+  createdByName        String?
+  sentById             String?
+  sentAt               DateTime?
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  approvals            PRCommApproval[]
 }
 
 model PRCommApproval {
   id        String   @id @default(uuid())
   prCommId  String
+  prComm    PRComm   @relation(fields: [prCommId], references: [id])
   userEmail String
   createdAt DateTime @default(now())
 
@@ -193,100 +512,205 @@ model SocialCalendar {
   category    String
   postPlan    String?
   mediaRef    String?
+  createdAt   DateTime @default(now())
 }
 
-model Donor {
+// ─── Meetings ─────────────────────────────────────────────────────────────────
+
+model MeetingMinute {
+  id                String    @id @default(uuid())
+  title             String
+  meetingAt         DateTime
+  endAt             DateTime?
+  meetingType       String?
+  location          String?
+  organizerEmail    String?
+  googleEventId     String?
+  calendarEventLink String?
+  requiredAttendees String[]  @default([])
+  optionalAttendees String[]  @default([])
+  attendees         String[]  @default([])
+  notes             String
+  createdBy         String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  actionItems       MeetingAction[]
+}
+
+model MeetingAction {
+  id              String        @id @default(uuid())
+  minuteId        String
+  minute          MeetingMinute @relation(fields: [minuteId], references: [id])
+  title           String
+  status          String        @default("todo")
+  ownerEmail      String?
+  linkedFaultId   String?
+  linkedProjectId String?
+  dueDate         DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+// ─── Vault ────────────────────────────────────────────────────────────────────
+
+model VaultAsset {
+  id          String    @id @default(uuid())
+  assetName   String
+  filePath    String
+  category    String
+  description String?
+  visibility  String    @default("all")
+  tags        String[]  @default([])
+  uploadedBy  String?
+  isApproved  Boolean   @default(false)
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ─── Help & Forum ─────────────────────────────────────────────────────────────
+
+model HelpArticle {
   id           String   @id @default(uuid())
-  name         String
-  email        String   @unique
-  tier         String
-  interests    String?
-  totalDonated Decimal  @default(0)
+  module       String
+  page         String
+  topic        String
+  category     String
+  instructions String
+  keywords     String[] @default([])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model HelpForumThread {
+  id             String   @id @default(uuid())
+  module         String
+  page           String
+  title          String
+  type           String
+  status         String   @default("open")
+  createdByName  String
+  createdByEmail String
+  tags           String[] @default([])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  comments       HelpForumComment[]
+}
+
+model HelpForumComment {
+  id          String          @id @default(uuid())
+  threadId    String
+  thread      HelpForumThread @relation(fields: [threadId], references: [id])
+  authorName  String
+  authorEmail String
+  authorRole  String
+  body        String
+  editedAt    DateTime?
+  createdAt   DateTime        @default(now())
+}
+
+// ─── Donors (Phase 2, model ready) ───────────────────────────────────────────
+
+model Donor {
+  id             String     @id @default(uuid())
+  name           String
+  email          String     @unique
+  donorType      String     @default("individual")
+  contactPerson  String?
+  phone          String?
+  address        String?
+  tier           String?
+  interests      String?
+  recurringDonor Boolean    @default(false)
+  notes          String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  donations      Donation[]
 }
 
 model Donation {
   id        String   @id @default(uuid())
   donorId   String
+  donor     Donor    @relation(fields: [donorId], references: [id])
   projectId String?
   amount    Decimal
   date      DateTime
-  createdAt DateTime @default(now())
-}
-
-model VaultAsset {
-  id          String   @id @default(uuid())
-  assetName   String
-  filePath    String
-  category    String
-  description String?
-  visibility  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model HelpArticle {
-  id           String   @id @default(uuid())
-  topic        String
-  category     String
-  instructions String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-
-model MeetingMinute {
-  id          String   @id @default(uuid())
-  title       String
-  meetingAt   DateTime
-  attendees   String
-  notes       String
-  attachments String?
-  createdBy   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model MeetingAction {
-  id              String   @id @default(uuid())
-  minuteId        String
-  title           String
-  ownerEmail      String?
-  linkedFaultId   String?
-  linkedProjectId String?
-  status          String
-  dueDate         DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-}
-
-model InfrastructureAsset {
-  id        String    @id @default(uuid())
-  assetName String
-  assetType AssetType
-  condition String
-  street    String
-  latitude  Float
-  longitude Float
   notes     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
-
-model AssetPhoto {
-  id        String   @id @default(uuid())
-  assetId   String
-  filePath  String
-  caption   String?
   createdAt DateTime @default(now())
 }
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+model AppNotification {
+  id                    String    @id @default(uuid())
+  title                 String
+  detail                String
+  channel               String
+  deliveryStatus        String    @default("pending")
+  deliveryAttempts      Int       @default(0)
+  lastDeliveryAttemptAt DateTime?
+  nextRetryAt           DateTime?
+  deliveryError         String?
+  audience              String    @default("admins")
+  targetEmails          String[]  @default([])
+  importance            String    @default("informational")
+  tone                  String    @default("default")
+  readBy                String[]  @default([])
+  createdAt             DateTime  @default(now())
+}
+
+// ─── Active Sessions ──────────────────────────────────────────────────────────
+
+model ActiveSession {
+  id             String   @id @default(uuid())
+  userEmail      String
+  userName       String
+  role           String
+  status         String   @default("active")
+  userAgent      String?
+  lastActivityAt DateTime @default(now())
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+
+  @@index([userEmail])
+}
+
+// ─── Audit Log ────────────────────────────────────────────────────────────────
 
 model AuditLog {
   id          String   @id @default(uuid())
   actorEmail  String
+  actorName   String?
   action      String
   entityType  String
   entityId    String
   description String?
+  before      Json?
+  after       Json?
+  source      String   @default("manual")
+  reason      String?
   createdAt   DateTime @default(now())
+
+  faultId     String?
+  fault       Fault?               @relation(fields: [faultId], references: [id])
+  projectId   String?
+  project     Project?             @relation(fields: [projectId], references: [id])
+  assetId     String?
+  asset       InfrastructureAsset? @relation(fields: [assetId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([actorEmail])
+  @@index([createdAt])
+}
+
+// ─── JsonStore (migration bridge — remove after full Prisma migration) ────────
+
+model JsonStore {
+  key       String   @id
+  payload   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
