@@ -18,6 +18,18 @@ function sanitizeDatabaseUrl(raw) {
   return value;
 }
 
+function resolveDatabaseUrlFromEnv() {
+  const direct = sanitizeDatabaseUrl(process.env.DATABASE_URL);
+  if (direct) return direct;
+
+  const fallbackNamed = sanitizeDatabaseUrl(process.env.POSTGRES_URL || process.env.POSTGRESQL_URL);
+  if (fallbackNamed) return fallbackNamed;
+
+  const matchingKey = Object.keys(process.env).find((key) => key.trim().toUpperCase() === "DATABASE_URL");
+  if (!matchingKey) return "";
+  return sanitizeDatabaseUrl(process.env[matchingKey]);
+}
+
 function maskDatabaseUrl(url) {
   try {
     const parsed = new URL(url);
@@ -52,8 +64,7 @@ function run(command, args, env) {
   });
 }
 
-const fallbackUrl = process.env.POSTGRES_URL || process.env.POSTGRESQL_URL || "";
-const sanitized = sanitizeDatabaseUrl(process.env.DATABASE_URL || fallbackUrl);
+const sanitized = resolveDatabaseUrlFromEnv();
 
 if (!sanitized || (!sanitized.startsWith("postgres://") && !sanitized.startsWith("postgresql://"))) {
   console.error("[start:cloud] Invalid DATABASE_URL after sanitization.");

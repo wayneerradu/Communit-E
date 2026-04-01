@@ -24,7 +24,30 @@ function sanitizeDatabaseUrl(raw: string | undefined) {
   return value;
 }
 
-const sanitizedDatabaseUrl = sanitizeDatabaseUrl(process.env.DATABASE_URL);
+function resolveDatabaseUrlFromEnv() {
+  const direct = sanitizeDatabaseUrl(process.env.DATABASE_URL);
+  if (direct) {
+    return direct;
+  }
+
+  const fallbackNamed = sanitizeDatabaseUrl(process.env.POSTGRES_URL || process.env.POSTGRESQL_URL);
+  if (fallbackNamed) {
+    return fallbackNamed;
+  }
+
+  // Handle platforms that accidentally store the key with hidden/trailing characters.
+  const matchingKey = Object.keys(process.env).find((key) => key.trim().toUpperCase() === "DATABASE_URL");
+  if (!matchingKey) {
+    return "";
+  }
+
+  return sanitizeDatabaseUrl(process.env[matchingKey]);
+}
+
+const sanitizedDatabaseUrl = resolveDatabaseUrlFromEnv();
+if (sanitizedDatabaseUrl) {
+  process.env.DATABASE_URL = sanitizedDatabaseUrl;
+}
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
