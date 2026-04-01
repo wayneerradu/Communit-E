@@ -24,15 +24,18 @@ function sanitizeDatabaseUrl(raw) {
 }
 
 function resolveDatabaseUrlFromEnv() {
+  const appSpecific = sanitizeDatabaseUrl(process.env.APP_DATABASE_URL);
+  if (appSpecific) return { value: appSpecific, source: "APP_DATABASE_URL" };
+
   const direct = sanitizeDatabaseUrl(process.env.DATABASE_URL);
-  if (direct) return direct;
+  if (direct) return { value: direct, source: "DATABASE_URL" };
 
   const fallbackNamed = sanitizeDatabaseUrl(process.env.POSTGRES_URL || process.env.POSTGRESQL_URL);
-  if (fallbackNamed) return fallbackNamed;
+  if (fallbackNamed) return { value: fallbackNamed, source: "POSTGRES_URL/POSTGRESQL_URL" };
 
   const matchingKey = Object.keys(process.env).find((key) => key.trim().toUpperCase() === "DATABASE_URL");
-  if (!matchingKey) return "";
-  return sanitizeDatabaseUrl(process.env[matchingKey]);
+  if (!matchingKey) return { value: "", source: "none" };
+  return { value: sanitizeDatabaseUrl(process.env[matchingKey]), source: matchingKey };
 }
 
 function maskDatabaseUrl(url) {
@@ -69,7 +72,8 @@ function run(command, args, env) {
   });
 }
 
-const sanitized = resolveDatabaseUrlFromEnv();
+const resolved = resolveDatabaseUrlFromEnv();
+const sanitized = resolved.value;
 
 if (!sanitized || (!sanitized.startsWith("postgres://") && !sanitized.startsWith("postgresql://"))) {
   console.error("[start:cloud] Invalid DATABASE_URL after sanitization.");
@@ -79,6 +83,7 @@ if (!sanitized || (!sanitized.startsWith("postgres://") && !sanitized.startsWith
 }
 
 process.env.DATABASE_URL = sanitized;
+console.log(`[start:cloud] DATABASE_URL source: ${resolved.source}`);
 console.log(`[start:cloud] DATABASE_URL accepted: ${maskDatabaseUrl(sanitized)}`);
 
 const prismaBin = process.platform === "win32" ? "prisma.cmd" : "prisma";

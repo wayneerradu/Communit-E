@@ -28,6 +28,11 @@ function sanitizeDatabaseUrl(raw: string | undefined) {
 }
 
 function resolveDatabaseUrlFromEnv() {
+  const appSpecific = sanitizeDatabaseUrl(process.env.APP_DATABASE_URL);
+  if (appSpecific) {
+    return appSpecific;
+  }
+
   const direct = sanitizeDatabaseUrl(process.env.DATABASE_URL);
   if (direct) {
     return direct;
