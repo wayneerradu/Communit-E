@@ -130,6 +130,14 @@ await waitForDB(
 const prismaBin = process.platform === "win32" ? "prisma.cmd" : "prisma";
 
 try {
+  // Temporary bootstrap guard: mark initial migration as rolled back if it was left in a failed state.
+  // Safe to remove after first successful deploy.
+  try {
+    await run(prismaBin, ["migrate", "resolve", "--rolled-back", "0001_initial"], process.env);
+  } catch {
+    // Ignore: migration may already be resolved or missing.
+  }
+
   await run(prismaBin, ["migrate", "deploy"], process.env);
   await run("node", ["scripts/start.mjs"], process.env);
 } catch (error) {
