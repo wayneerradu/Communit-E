@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { GlobalSearch } from "@/components/shared/global-search";
 import { loadGoogleMaps } from "@/lib/google-maps-client";
@@ -171,19 +171,22 @@ export function FaultMapConsole({ faults, googleMapsApiKey, defaultCenter }: Fau
     [activePriorities, openFaults]
   );
 
-  function getFaultCoordinates(fault: Fault) {
-    if (typeof fault.latitude === "number" && typeof fault.longitude === "number") {
-      return { lat: fault.latitude, lng: fault.longitude };
-    }
-    return geocodeCache[fault.id];
-  }
+  const getFaultCoordinates = useCallback(
+    (fault: Fault) => {
+      if (typeof fault.latitude === "number" && typeof fault.longitude === "number") {
+        return { lat: fault.latitude, lng: fault.longitude };
+      }
+      return geocodeCache[fault.id];
+    },
+    [geocodeCache]
+  );
 
   const mappedFaults = useMemo(
     () =>
       visibleFaults.filter(
         (fault) => Boolean(getFaultCoordinates(fault))
       ),
-    [visibleFaults, geocodeCache]
+    [getFaultCoordinates, visibleFaults]
   );
 
   const unmappedFaults = useMemo(
@@ -191,7 +194,7 @@ export function FaultMapConsole({ faults, googleMapsApiKey, defaultCenter }: Fau
       visibleFaults.filter(
         (fault) => !getFaultCoordinates(fault)
       ),
-    [visibleFaults, geocodeCache]
+    [getFaultCoordinates, visibleFaults]
   );
 
   const selectedFault =
@@ -220,12 +223,6 @@ export function FaultMapConsole({ faults, googleMapsApiKey, defaultCenter }: Fau
   }, [visibleFaults]);
 
   useEffect(() => {
-    if (!selectedFaultId && mappedFaults[0]) {
-      setSelectedFaultId(mappedFaults[0].id);
-    }
-  }, [mappedFaults, selectedFaultId]);
-
-  useEffect(() => {
     let cancelled = false;
 
     async function geocodeMissingFaults() {
@@ -247,7 +244,6 @@ export function FaultMapConsole({ faults, googleMapsApiKey, defaultCenter }: Fau
           const query = fault.locationText.toLowerCase().includes("durban")
             ? fault.locationText
             : `${fault.locationText}, Durban, South Africa`;
-          // eslint-disable-next-line no-await-in-loop
           const result = await geocoder.geocode({ address: query }).catch(() => null);
           const location = result?.results?.[0]?.geometry?.location;
           const lat = typeof location?.lat === "function" ? location.lat() : undefined;
@@ -265,7 +261,7 @@ export function FaultMapConsole({ faults, googleMapsApiKey, defaultCenter }: Fau
     return () => {
       cancelled = true;
     };
-  }, [googleMapsApiKey, visibleFaults]);
+  }, [getFaultCoordinates, googleMapsApiKey, visibleFaults]);
 
   useEffect(() => {
     let cancelled = false;
@@ -380,7 +376,7 @@ export function FaultMapConsole({ faults, googleMapsApiKey, defaultCenter }: Fau
     defaultCenter.zoom,
     googleMapsApiKey,
     mappedFaults,
-    geocodeCache
+    getFaultCoordinates
   ]);
 
   function togglePriority(priority: Fault["priority"]) {

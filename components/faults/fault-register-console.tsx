@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { FaultSubCategoryDropdown } from "@/components/faults/fault-subcategory-dropdown";
 import { GlobalSearch } from "@/components/shared/global-search";
@@ -886,9 +887,13 @@ export function FaultRegisterConsole({
                   <div className="fault-media-grid">
                     {((editDraft.mediaRefs as string[] | undefined) ?? []).map((ref, index) => (
                       <article key={`${selectedFault.id}-media-${index}`} className="fault-media-item">
-                        <img
+                        <Image
                           src={ref}
                           alt={`Fault media ${index + 1}`}
+                          width={300}
+                          height={190}
+                          unoptimized
+                          style={{ width: "100%", height: "auto" }}
                           onClick={() => setPreviewMediaIndex(index)}
                           role="button"
                           tabIndex={0}
@@ -1084,7 +1089,14 @@ export function FaultRegisterConsole({
               </div>
 
               <div className="fault-media-preview-image-wrap">
-                <img src={previewSrc} alt={`Fault preview ${previewMediaIndex! + 1}`} className="fault-media-preview-image" />
+                <Image
+                  src={previewSrc}
+                  alt={`Fault preview ${previewMediaIndex! + 1}`}
+                  className="fault-media-preview-image"
+                  width={1100}
+                  height={700}
+                  unoptimized
+                />
               </div>
 
               {workspaceMediaRefs.length > 1 ? (

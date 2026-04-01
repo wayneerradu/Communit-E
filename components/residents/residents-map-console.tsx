@@ -210,16 +210,6 @@ export function ResidentsMapConsole({ residents, currentUserName, googleMapsApiK
   }));
 
   useEffect(() => {
-    if (selectedResidentId) {
-      return;
-    }
-
-    if (mappedResidents[0]) {
-      setSelectedResidentId(mappedResidents[0].id);
-    }
-  }, [mappedResidents, selectedResidentId]);
-
-  useEffect(() => {
     let cancelled = false;
 
     void (async () => {

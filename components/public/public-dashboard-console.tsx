@@ -81,10 +81,11 @@ function getBadgeTone(status: PublicFault["status"]) {
   return "default";
 }
 
+const rotationOrder = ["opened", "closed", "in-progress", "fixed"] as const;
+
 export function PublicDashboardConsole({ faults }: Props) {
   const [selectedTile, setSelectedTile] = useState<TileId>("latest-overview");
   const [rotationIndex, setRotationIndex] = useState(0);
-  const rotationOrder = ["opened", "closed", "in-progress", "fixed"] as const;
   const rotatingStatus = rotationOrder[rotationIndex % rotationOrder.length];
 
   useEffect(() => {

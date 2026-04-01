@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type InboxItem = {
   id: string;
@@ -209,7 +209,7 @@ export function HelloInboxConsole() {
   }, [filteredItems, mailViewMode]);
   const selectedListItem = visibleItems.find((item) => item.id === selectedId) ?? null;
 
-  async function loadInbox(targetToken?: string | null, resetHistory = false, folder?: typeof mailFolder) {
+  const loadInbox = useCallback(async (targetToken?: string | null, resetHistory = false, folder?: typeof mailFolder) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -232,17 +232,15 @@ export function HelloInboxConsole() {
       if (resetHistory) {
         setMailboxTokenHistory([]);
       }
-      if (!nextItems.find((item) => item.id === selectedId)) {
-        setSelectedId(nextItems[0]?.id ?? "");
-      }
+      setSelectedId((current) => (nextItems.some((item) => item.id === current) ? current : (nextItems[0]?.id ?? "")));
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load inbox.");
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [mailFolder]);
 
-  async function loadCalendar() {
+  const loadCalendar = useCallback(async () => {
     setIsCalendarLoading(true);
     setCalendarMessage(null);
     try {
@@ -260,11 +258,11 @@ export function HelloInboxConsole() {
     } finally {
       setIsCalendarLoading(false);
     }
-  }
+  }, [calendarAnchorDate, calendarView]);
 
   useEffect(() => {
     void loadInbox(null, true);
-  }, []);
+  }, [loadInbox]);
 
   useEffect(() => {
     let cancelled = false;
@@ -304,7 +302,7 @@ export function HelloInboxConsole() {
 
   useEffect(() => {
     void loadInbox(null, true, mailFolder);
-  }, [mailFolder]);
+  }, [loadInbox, mailFolder]);
 
   useEffect(() => {
     let cancelled = false;
@@ -328,7 +326,7 @@ export function HelloInboxConsole() {
 
   useEffect(() => {
     void loadCalendar();
-  }, [calendarView, calendarAnchorDate]);
+  }, [loadCalendar]);
 
   useEffect(() => {
     if (!selectedId) {

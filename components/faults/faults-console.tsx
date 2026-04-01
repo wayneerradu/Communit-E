@@ -562,7 +562,7 @@ export function FaultsConsole({
       .replace(/\b\w/g, (match) => match.toUpperCase());
   }
 
-  const drilldownFaults = useMemo(() => {
+  const drilldownFaults = (() => {
     if (!drilldown) return faults;
     if (drilldown === "open-escalated") return openFaults;
     if (drilldown === "awaiting-response") return awaitingResponseFaults;
@@ -625,19 +625,7 @@ export function FaultsConsole({
       }
     }
     return faults;
-  }, [
-    drilldown,
-    faults,
-    openFaults,
-    awaitingResponseFaults,
-    inProgressFaults,
-    criticalFaults,
-    highFaults,
-    mediumFaults,
-    lowFaults,
-    faultDurations,
-    topResidentFaultLogger
-  ]);
+  })();
 
   return (
     <>

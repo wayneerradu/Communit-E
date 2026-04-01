@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import type { ChangeEvent } from "react";
 import { useEffect, useState, useTransition } from "react";
 import type { PlatformControlCenter, PlatformService, PlatformSettings } from "@/types/domain";
@@ -1044,7 +1045,14 @@ export function SuperAdminConsole({
               <span>Logo Preview</span>
               <div className="branding-logo-preview">
                 {settings.branding.logoImage ? (
-                  <img src={settings.branding.logoImage} alt="Brand logo preview" className="branding-logo-preview-image" />
+                  <Image
+                    src={settings.branding.logoImage}
+                    alt="Brand logo preview"
+                    className="branding-logo-preview-image"
+                    width={320}
+                    height={120}
+                    unoptimized
+                  />
                 ) : (
                   <div className="branding-logo-preview-placeholder">Logo placeholder</div>
                 )}
