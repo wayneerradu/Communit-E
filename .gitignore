@@ -20,5 +20,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Local backups
+Communit-E-backup-*.zip
+
 # Local caches
 tsconfig.tsbuildinfo
