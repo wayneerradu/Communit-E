@@ -1,5 +1,7 @@
 import { spawn } from "node:child_process";
 
+console.log(process.env.DATABASE_URL ? process.env.DATABASE_URL.slice(0, 20) : "MISSING");
+
 function sanitizeDatabaseUrl(raw) {
   if (!raw) return "";
   let value = String(raw).trim();
