@@ -15,7 +15,7 @@ export default async function LoginPage() {
         <div className="page-header">
           <div>
             <h1>Sign in to CommUNIT-E</h1>
-            <p>Use the local Super Admin account for development now, then switch to Google Workspace SSO when deployment settings are ready.</p>
+            <p>Sign in with Google Workspace to verify each admin and office bearer profile before access is granted.</p>
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { getSessionUser } from "@/lib/auth";
 import { readCustomSocialCalendarItems, writeCustomSocialCalendarItems } from "@/lib/social-calendar-custom-store";
 import type { SocialCalendarItem } from "@/types/domain";
 
@@ -21,11 +22,21 @@ function getDateLine(dateValue: string) {
 }
 
 export async function GET() {
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const items = await readCustomSocialCalendarItems();
   return NextResponse.json({ items });
 }
 
 export async function POST(request: Request) {
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const payload = customHolidaySchema.parse(await request.json());
     const items = await readCustomSocialCalendarItems();

@@ -146,6 +146,17 @@ const schema = z.object({
       })
     })
     .optional(),
+  wordpress: z
+    .object({
+      enabled: z.boolean(),
+      baseUrl: z.string(),
+      username: z.string(),
+      appPassword: z.string().optional(),
+      defaultStatus: z.enum(["draft", "publish"]),
+      defaultCategory: z.string().min(2),
+      categories: z.array(z.string().min(2)).min(1)
+    })
+    .optional(),
   sessionPolicy: z
     .object({
       idleTimeoutMinutes: z.number().int().min(5),
@@ -171,7 +182,17 @@ export async function GET() {
   if (!user || user.role !== "SUPER_ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  return NextResponse.json({ item: await readPlatformSettings() });
+
+  const settings = await readPlatformSettings();
+  return NextResponse.json({
+    item: {
+      ...settings,
+      wordpress: {
+        ...settings.wordpress,
+        appPassword: ""
+      }
+    }
+  });
 }
 
 export async function POST(request: Request) {
@@ -256,6 +277,14 @@ export async function POST(request: Request) {
       updated.communicationTemplates = {
         ...updated.communicationTemplates,
         ...payload.communicationTemplates
+      };
+    }
+
+    if (payload.wordpress) {
+      updated.wordpress = {
+        ...updated.wordpress,
+        ...payload.wordpress,
+        appPassword: ""
       };
     }
 

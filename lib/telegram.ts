@@ -6,14 +6,8 @@ const TELEGRAM_TZ = "Africa/Johannesburg";
 type TelegramSendResult = {
   ok: boolean;
   reason?: string;
+  queuedUntil?: string;
 };
-
-function patchNotification(notification: AppNotification, patch: Partial<AppNotification>): AppNotification {
-  return {
-    ...notification,
-    ...patch
-  };
-}
 
 function parseTimeToMinutes(value: string) {
   const [hoursPart, minutesPart] = value.split(":");
@@ -307,10 +301,7 @@ export async function dispatchTelegramNotification(
         ? "Telegram notifications are disabled in Communication Settings."
         : "Telegram is not fully configured.";
     return {
-      notification: patchNotification(notification, {
-        tone: "warning",
-        detail: `${notification.detail} (${disabledReason})`
-      }),
+      notification,
       delivery: { ok: false, reason: disabledReason }
     };
   }
@@ -318,10 +309,7 @@ export async function dispatchTelegramNotification(
   const force = options?.force ?? false;
   if (!force && settings.notificationPolicy.telegramCriticalOnly && notification.importance !== "critical") {
     return {
-      notification: patchNotification(notification, {
-        tone: "default",
-        detail: `${notification.detail} (Skipped by Telegram critical-only policy)`
-      }),
+      notification,
       delivery: { ok: false, reason: "Skipped by critical-only policy." }
     };
   }
@@ -332,31 +320,25 @@ export async function dispatchTelegramNotification(
       ? new Date(sendAfter).toLocaleString("en-ZA", { timeZone: TELEGRAM_TZ })
       : "next business day 09:00 SAST";
     return {
-      notification: patchNotification(notification, {
-        tone: "default",
-        detail: `${notification.detail} (Queued for delivery at ${sendAfterLabel})`
-      }),
-      delivery: { ok: false, reason: "Queued for next business day 09:00 SAST." }
+      notification,
+      delivery: {
+        ok: false,
+        reason: `Queued for delivery at ${sendAfterLabel}.`,
+        queuedUntil: sendAfter ?? undefined
+      }
     };
   }
 
   const result = await sendTelegramMessage(formatTelegramMessage(notification), settings);
   if (!result.ok) {
     return {
-      notification: patchNotification(notification, {
-        tone: "warning",
-        detail: `${notification.detail} (Telegram send failed: ${result.reason ?? "unknown error"})`
-      }),
+      notification,
       delivery: result
     };
   }
 
-  const channel = resolveTelegramChannel(settings);
   return {
-    notification: patchNotification(notification, {
-      tone: "success",
-      detail: `${notification.detail} (Telegram sent to ${channel.groupName})`
-    }),
+    notification,
     delivery: result
   };
 }

@@ -209,7 +209,7 @@ export default async function DashboardPage() {
           <div className="section-header">
             <div>
               <h2>Today</h2>
-              <p>Today's reminders and notifications are brought together on the home screen.</p>
+              <p>Today&apos;s reminders and notifications are brought together on the home screen.</p>
             </div>
             <span className="status-chip status-chip-success">In Sync</span>
           </div>

@@ -13,6 +13,11 @@ const eventCampaignSchema = z.object({
 });
 
 export async function GET() {
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const items = await readProEventCampaignStore();
   return NextResponse.json({ items });
 }
@@ -21,6 +26,10 @@ export async function POST(request: Request) {
   try {
     const payload = eventCampaignSchema.parse(await request.json());
     const user = await getSessionUser();
+    if (!user || (user.role !== "PRO" && user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const items = await readProEventCampaignStore();
     const nextItem: ProEventCampaignItem = {
       id: `event-campaign-${randomUUID()}`,

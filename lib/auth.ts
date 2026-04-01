@@ -1,9 +1,80 @@
 import { cookies } from "next/headers";
-import { createHash, randomUUID } from "node:crypto";
+import { createHash, createHmac, randomUUID } from "node:crypto";
 import type { ActiveSession, Role, SessionUser } from "@/types/domain";
 import { readPlatformControlCenter, readPlatformSettings, updatePlatformControlCenter } from "@/lib/platform-store";
 
 const SESSION_COOKIE = "communite_session";
+const DEFAULT_SESSION_SECRET = "communit-e-dev-session-secret";
+
+type SessionPayload = {
+  sessionId: string;
+  email: string;
+  role: Role;
+  name: string;
+  id: string;
+};
+
+function getSessionSecret() {
+  const configured = process.env.SESSION_SECRET?.trim();
+  if (configured) {
+    return configured;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET is required in production.");
+  }
+
+  return DEFAULT_SESSION_SECRET;
+}
+
+function encodeSessionPayload(payload: SessionPayload) {
+  const serialized = JSON.stringify(payload);
+  const encoded = Buffer.from(serialized, "utf8").toString("base64url");
+  const signature = createHmac("sha256", getSessionSecret()).update(encoded).digest("base64url");
+  return `${encoded}.${signature}`;
+}
+
+function decodeSessionPayload(value: string): SessionPayload | null {
+  const [encoded, signature] = value.split(".");
+  if (!encoded || !signature) {
+    return null;
+  }
+
+  const expected = createHmac("sha256", getSessionSecret()).update(encoded).digest("base64url");
+  if (expected !== signature) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(Buffer.from(encoded, "base64url").toString("utf8")) as SessionPayload;
+    if (!parsed.sessionId || !parsed.email || !parsed.role || !parsed.name || !parsed.id) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function parseSessionCookie(value: string): SessionPayload | null {
+  const signedPayload = decodeSessionPayload(value);
+  if (signedPayload) {
+    return signedPayload;
+  }
+
+  const [sessionId, email, role, name, id] = value.split("|");
+  if (!sessionId || !email || !role || !name || !id) {
+    return null;
+  }
+
+  return {
+    sessionId,
+    email,
+    role: role as Role,
+    name,
+    id
+  };
+}
 
 export async function getSessionUser(): Promise<SessionUser | null> {
   const store = await cookies();
@@ -12,10 +83,11 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     return null;
   }
 
-  const [sessionId, email, role, name, id] = session.value.split("|");
-  if (!sessionId || !email || !role || !name || !id) {
+  const parsed = parseSessionCookie(session.value);
+  if (!parsed) {
     return null;
   }
+  const { sessionId, email, role, name, id } = parsed;
 
   const controlCenter = await readPlatformControlCenter();
   const trackedSession = controlCenter.activeSessions.find((entry) => entry.id === sessionId);
@@ -69,18 +141,29 @@ export async function setSessionUser(user: SessionUser, userAgent?: string) {
   });
 
   const store = await cookies();
-  store.set(SESSION_COOKIE, [sessionId, user.email, user.role, user.name, user.id].join("|"), {
+  store.set(
+    SESSION_COOKIE,
+    encodeSessionPayload({
+      sessionId,
+      email: user.email,
+      role: user.role,
+      name: user.name,
+      id: user.id
+    }),
+    {
     httpOnly: true,
     sameSite: "lax",
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     path: "/"
-  });
+  }
+  );
 }
 
 export async function clearSessionUser() {
   const store = await cookies();
   const session = store.get(SESSION_COOKIE);
-  const sessionId = session?.value.split("|")[0];
+  const parsed = session?.value ? parseSessionCookie(session.value) : null;
+  const sessionId = parsed?.sessionId;
   if (sessionId) {
     await revokeSession(sessionId);
   }

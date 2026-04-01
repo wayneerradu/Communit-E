@@ -372,6 +372,7 @@ export async function getProData() {
   await syncPlannerItemsToGoogleCalendar(plannerItemsForCalendar).catch(() => {});
   const plannerEvents = await syncGoogleCalendarPlannerItems().catch(() => []);
   const eventCampaigns = await readProEventCampaignStore().catch(() => []);
+  const platformSettings = await readPlatformSettings();
 
   return {
     prComms: readPRCommsStore(),
@@ -379,6 +380,7 @@ export async function getProData() {
     internationalObservances: mergedObservances,
     plannerEvents,
     eventCampaigns,
+    wordpress: platformSettings.wordpress,
     donors,
     donations
   };

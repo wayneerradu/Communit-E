@@ -1,0 +1,249 @@
+[
+  {
+    "id": "audit-1775050455162-pedd1p",
+    "createdAt": "2026-04-01T13:34:15.162Z",
+    "area": "communications",
+    "entityId": "pr-test-1",
+    "action": "communication.sent",
+    "before": {
+      "status": "approved",
+      "appCount": 2
+    },
+    "after": {
+      "status": "sent",
+      "appCount": 2
+    },
+    "detail": "Communication moved to sent after unique approvals."
+  },
+  {
+    "id": "audit-1775050455142-h3lrgt",
+    "createdAt": "2026-04-01T13:34:15.142Z",
+    "area": "communications",
+    "entityId": "pr-test-1",
+    "action": "communication.approved",
+    "actorName": "Admin Two",
+    "actorEmail": "admin-two@example.com",
+    "before": {
+      "status": "approved",
+      "appCount": 1
+    },
+    "after": {
+      "status": "approved",
+      "appCount": 2
+    },
+    "detail": "Communication approval recorded (2/2)."
+  },
+  {
+    "id": "audit-1775050455122-mruz3d",
+    "createdAt": "2026-04-01T13:34:15.122Z",
+    "area": "communications",
+    "entityId": "pr-test-1",
+    "action": "communication.approved",
+    "actorName": "Admin One",
+    "actorEmail": "admin-one@example.com",
+    "before": {
+      "status": "pending-approval",
+      "appCount": 0
+    },
+    "after": {
+      "status": "pending-approval",
+      "appCount": 1
+    },
+    "detail": "Communication approval recorded (1/2)."
+  },
+  {
+    "id": "audit-1775050454987-he5ycs",
+    "createdAt": "2026-04-01T13:34:14.987Z",
+    "area": "faults",
+    "entityId": "fault-1",
+    "action": "fault.escalated-plus",
+    "actorName": "Naledi Mokoena",
+    "actorEmail": "naledi@unityincommunity.org.za",
+    "before": {
+      "escalationLevel": "none",
+      "status": "escalated",
+      "escalationCount": 1
+    },
+    "after": {
+      "escalationLevel": "plus",
+      "status": "escalated",
+      "escalationCount": 2
+    },
+    "detail": "Escalate+ executed."
+  },
+  {
+    "id": "audit-1775050454960-zpt2zs",
+    "createdAt": "2026-04-01T13:34:14.960Z",
+    "area": "faults",
+    "entityId": "fault-1",
+    "action": "fault.created",
+    "actorName": "Naledi Mokoena",
+    "actorEmail": "naledi@unityincommunity.org.za",
+    "after": {
+      "status": "escalated",
+      "priority": "high",
+      "category": "water leak",
+      "subCategory": null,
+      "assignedToEmail": "naledi@unityincommunity.org.za"
+    },
+    "detail": "Fault captured and initial escalation queued."
+  },
+  {
+    "id": "audit-1775050383154-ptcoqp",
+    "createdAt": "2026-04-01T13:33:03.154Z",
+    "area": "communications",
+    "entityId": "pr-test-1",
+    "action": "communication.sent",
+    "before": {
+      "status": "approved",
+      "appCount": 2
+    },
+    "after": {
+      "status": "sent",
+      "appCount": 2
+    },
+    "detail": "Communication moved to sent after unique approvals."
+  },
+  {
+    "id": "audit-1775050383057-fxiceo",
+    "createdAt": "2026-04-01T13:33:03.057Z",
+    "area": "communications",
+    "entityId": "pr-test-1",
+    "action": "communication.approved",
+    "actorName": "Admin Two",
+    "actorEmail": "admin-two@example.com",
+    "before": {
+      "status": "approved",
+      "appCount": 1
+    },
+    "after": {
+      "status": "approved",
+      "appCount": 2
+    },
+    "detail": "Communication approval recorded (2/2)."
+  },
+  {
+    "id": "audit-1775050383000-ol0len",
+    "createdAt": "2026-04-01T13:33:03.000Z",
+    "area": "communications",
+    "entityId": "pr-test-1",
+    "action": "communication.approved",
+    "actorName": "Admin One",
+    "actorEmail": "admin-one@example.com",
+    "before": {
+      "status": "pending-approval",
+      "appCount": 0
+    },
+    "after": {
+      "status": "pending-approval",
+      "appCount": 1
+    },
+    "detail": "Communication approval recorded (1/2)."
+  },
+  {
+    "id": "audit-1775050382397-gb19pc",
+    "createdAt": "2026-04-01T13:33:02.397Z",
+    "area": "faults",
+    "entityId": "fault-1",
+    "action": "fault.escalated-plus",
+    "actorName": "Naledi Mokoena",
+    "actorEmail": "naledi@unityincommunity.org.za",
+    "before": {
+      "escalationLevel": "none",
+      "status": "escalated",
+      "escalationCount": 1
+    },
+    "after": {
+      "escalationLevel": "plus",
+      "status": "escalated",
+      "escalationCount": 2
+    },
+    "detail": "Escalate+ executed."
+  },
+  {
+    "id": "audit-1775050382347-h3heeu",
+    "createdAt": "2026-04-01T13:33:02.348Z",
+    "area": "faults",
+    "entityId": "fault-1",
+    "action": "fault.created",
+    "actorName": "Naledi Mokoena",
+    "actorEmail": "naledi@unityincommunity.org.za",
+    "after": {
+      "status": "escalated",
+      "priority": "high",
+      "category": "water leak",
+      "subCategory": null,
+      "assignedToEmail": "naledi@unityincommunity.org.za"
+    },
+    "detail": "Fault captured and initial escalation queued."
+  },
+  {
+    "id": "audit-1775050322722-d2a1u9",
+    "createdAt": "2026-04-01T13:32:02.722Z",
+    "area": "communications",
+    "entityId": "pr-test-1",
+    "action": "communication.sent",
+    "before": {
+      "status": "approved",
+      "appCount": 2
+    },
+    "after": {
+      "status": "sent",
+      "appCount": 2
+    },
+    "detail": "Communication moved to sent after unique approvals."
+  },
+  {
+    "id": "audit-1775050322701-s2yezv",
+    "createdAt": "2026-04-01T13:32:02.701Z",
+    "area": "communications",
+    "entityId": "pr-test-1",
+    "action": "communication.approved",
+    "actorName": "Admin Two",
+    "actorEmail": "admin-two@example.com",
+    "before": {
+      "status": "approved",
+      "appCount": 1
+    },
+    "after": {
+      "status": "approved",
+      "appCount": 2
+    },
+    "detail": "Communication approval recorded (2/2)."
+  },
+  {
+    "id": "audit-1775050322683-i5g3z7",
+    "createdAt": "2026-04-01T13:32:02.683Z",
+    "area": "communications",
+    "entityId": "pr-test-1",
+    "action": "communication.approved",
+    "actorName": "Admin One",
+    "actorEmail": "admin-one@example.com",
+    "before": {
+      "status": "pending-approval",
+      "appCount": 0
+    },
+    "after": {
+      "status": "pending-approval",
+      "appCount": 1
+    },
+    "detail": "Communication approval recorded (1/2)."
+  },
+  {
+    "id": "audit-1775050322497-nq7n7x",
+    "createdAt": "2026-04-01T13:32:02.497Z",
+    "area": "faults",
+    "entityId": "fault-1",
+    "action": "fault.created",
+    "actorName": "Naledi Mokoena",
+    "actorEmail": "naledi@unityincommunity.org.za",
+    "after": {
+      "status": "escalated",
+      "priority": "high",
+      "category": "water leak",
+      "subCategory": null,
+      "assignedToEmail": "naledi@unityincommunity.org.za"
+    },
+    "detail": "Fault captured and initial escalation queued."
+  }
+]

@@ -3,6 +3,11 @@ import { getSessionUser } from "@/lib/auth";
 import { createPRComm, listPRComms } from "@/lib/workflows";
 
 export async function GET() {
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   return NextResponse.json({ items: listPRComms() });
 }
 

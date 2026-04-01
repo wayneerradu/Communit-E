@@ -110,6 +110,26 @@
       "signature": "Regards,\n{officeBearerName}\nOffice Bearer, Unity In Community\n{officeBearerEmail}"
     }
   },
+  "wordpress": {
+    "enabled": true,
+    "baseUrl": "https://www.unityincommunity.org.za",
+    "username": "Unity-Bot",
+    "appPassword": "",
+    "defaultStatus": "publish",
+    "defaultCategory": "News",
+    "categories": [
+      "City Bylaws",
+      "Deep Dive",
+      "How to Guides",
+      "Initiatives",
+      "Legacy Projects",
+      "Media",
+      "Meetings",
+      "Monthly Scoredcard",
+      "News",
+      "Tips"
+    ]
+  },
   "sessionPolicy": {
     "idleTimeoutMinutes": 30,
     "absoluteSessionHours": 12,
@@ -129,5 +149,5 @@
     "escalatePlusBySubCategory": {},
     "escalatePlusPlusBySubCategory": {}
   },
-  "updatedAt": "2026-04-01T00:23:56.601Z"
+  "updatedAt": "2026-04-01T01:04:30.932Z"
 }

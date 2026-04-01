@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { getSessionUser } from "@/lib/auth";
 import { updatePlatformSettings } from "@/lib/platform-store";
 
 const schema = z.object({
@@ -9,6 +10,11 @@ const schema = z.object({
 });
 
 export async function POST(request: Request) {
+  const user = await getSessionUser();
+  if (!user || user.role !== "SUPER_ADMIN") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const payload = schema.parse(await request.json());
   const now = new Date().toISOString();
   const settings = await updatePlatformSettings((current) => ({

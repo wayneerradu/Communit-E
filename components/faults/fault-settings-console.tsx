@@ -131,6 +131,8 @@ export function FaultSettingsConsole({ initialFaultEscalation }: Props) {
   const [isPending, startTransition] = useTransition();
   const [isImporting, setIsImporting] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
+  const [isLegacyImporting, setIsLegacyImporting] = useState(false);
+  const [isLegacyPreviewing, setIsLegacyPreviewing] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [tone, setTone] = useState<"success" | "warning">("success");
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -144,6 +146,22 @@ export function FaultSettingsConsole({ initialFaultEscalation }: Props) {
       escalateCount: number;
       escalatePlusCount: number;
       escalatePlusPlusCount: number;
+    }>
+  >([]);
+  const [legacyImportFile, setLegacyImportFile] = useState<File | null>(null);
+  const [legacyWarnings, setLegacyWarnings] = useState<string[]>([]);
+  const [legacyPreviewRows, setLegacyPreviewRows] = useState<
+    Array<{
+      row: number;
+      reference: string;
+      title: string;
+      category: string;
+      subCategory?: string;
+      status: string;
+      createdAt: string;
+      locationText: string;
+      reporterEmail: string;
+      mediaCount: number;
     }>
   >([]);
   const [initialContacts, setInitialContacts] = useState<Contact[]>(
@@ -323,6 +341,73 @@ export function FaultSettingsConsole({ initialFaultEscalation }: Props) {
     }
   }
 
+  async function previewLegacyFaults() {
+    if (!legacyImportFile) {
+      setTone("warning");
+      setMessage("Choose a legacy faults CSV before previewing.");
+      return;
+    }
+
+    setIsLegacyPreviewing(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", legacyImportFile);
+      const response = await fetch("/api/faults/settings/import-legacy/preview", {
+        method: "POST",
+        body: formData
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to preview legacy faults import.");
+      }
+      setLegacyWarnings(Array.isArray(payload.warnings) ? payload.warnings : []);
+      setLegacyPreviewRows(Array.isArray(payload.previewRows) ? payload.previewRows : []);
+      setTone("success");
+      setMessage(`Legacy faults preview complete: ${payload.totalDrafts} import-ready records.`);
+    } catch (error) {
+      setTone("warning");
+      setMessage(error instanceof Error ? error.message : "Unable to preview legacy faults import.");
+    } finally {
+      setIsLegacyPreviewing(false);
+    }
+  }
+
+  async function importLegacyFaults() {
+    if (!legacyImportFile) {
+      setTone("warning");
+      setMessage("Choose a legacy faults CSV before importing.");
+      return;
+    }
+    if (!window.confirm("Import legacy faults now? Resolved records will be mapped to Archived.")) {
+      return;
+    }
+
+    setIsLegacyImporting(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", legacyImportFile);
+      formData.append("replaceExisting", "false");
+      const response = await fetch("/api/faults/settings/import-legacy", {
+        method: "POST",
+        body: formData
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to import legacy faults.");
+      }
+      setLegacyWarnings(Array.isArray(payload.warnings) ? payload.warnings : []);
+      setTone("success");
+      setMessage(
+        `Legacy faults imported: ${payload.importedCount} added, ${payload.skippedExisting} skipped existing references.`
+      );
+    } catch (error) {
+      setTone("warning");
+      setMessage(error instanceof Error ? error.message : "Unable to import legacy faults.");
+    } finally {
+      setIsLegacyImporting(false);
+    }
+  }
+
   return (
     <>
       {message ? (
@@ -431,8 +516,73 @@ export function FaultSettingsConsole({ initialFaultEscalation }: Props) {
       </section>
 
       <section className="surface-panel clean-marine-panel">
+        <div className="section-header">
+          <div>
+            <h2>Legacy Faults Import Tool</h2>
+            <p>
+              Import old-system faults. The original fault logged date is preserved as the escalation anchor date, and
+              resolved records are mapped to archived.
+            </p>
+          </div>
+        </div>
+        <div className="form-grid">
+          <label className="field">
+            <span>Upload Legacy Faults CSV</span>
+            <input
+              type="file"
+              accept=".csv"
+              onChange={(event) => setLegacyImportFile(event.target.files?.[0] ?? null)}
+            />
+          </label>
+        </div>
         <div className="action-row">
-          <button type="button" className="button-primary" onClick={saveSettings} disabled={isPending || isImporting}>
+          <button
+            type="button"
+            className="button-secondary"
+            onClick={previewLegacyFaults}
+            disabled={isLegacyPreviewing || isLegacyImporting}
+          >
+            {isLegacyPreviewing ? "Previewing..." : "Dry-Run Legacy Preview"}
+          </button>
+          <button
+            type="button"
+            className="button-secondary"
+            onClick={importLegacyFaults}
+            disabled={isLegacyImporting || isLegacyPreviewing}
+          >
+            {isLegacyImporting ? "Importing..." : "Import Legacy Faults"}
+          </button>
+        </div>
+        {legacyWarnings.length > 0 ? (
+          <article className="dashboard-today-card">
+            <strong>Legacy import warnings</strong>
+            <p>{legacyWarnings.slice(0, 6).join(" | ")}</p>
+          </article>
+        ) : null}
+        {legacyPreviewRows.length > 0 ? (
+          <article className="dashboard-today-card">
+            <strong>Legacy preview sample (first {legacyPreviewRows.length} rows)</strong>
+            <p>
+              {legacyPreviewRows
+                .slice(0, 4)
+                .map(
+                  (item) =>
+                    `${item.reference} | ${item.status} | ${item.category} • ${item.subCategory ?? "Unspecified"} | ${item.createdAt.slice(0, 10)}`
+                )
+                .join(" | ")}
+            </p>
+          </article>
+        ) : null}
+      </section>
+
+      <section className="surface-panel clean-marine-panel">
+        <div className="action-row">
+          <button
+            type="button"
+            className="button-primary"
+            onClick={saveSettings}
+            disabled={isPending || isImporting || isLegacyImporting}
+          >
             {isPending ? "Saving..." : "Save Fault Settings"}
           </button>
         </div>

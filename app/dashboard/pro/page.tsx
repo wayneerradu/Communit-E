@@ -8,7 +8,7 @@ export default async function ProPage({
   searchParams: Promise<{ focus?: string; queue?: string; action?: string; context?: string }>;
 }) {
   const user = await getSessionUser();
-  const { prComms, socialCalendar, internationalObservances, plannerEvents, eventCampaigns, donors, donations } = await getProData();
+  const { prComms, socialCalendar, internationalObservances, plannerEvents, eventCampaigns, wordpress, donors, donations } = await getProData();
   const { focus, queue, action, context } = await searchParams;
 
   return (
@@ -18,6 +18,7 @@ export default async function ProPage({
       internationalObservances={internationalObservances}
       plannerEvents={plannerEvents}
       eventCampaigns={eventCampaigns}
+      wordpress={wordpress}
       donors={donors}
       donations={donations}
       currentUser={user ?? { id: "anonymous", name: "Anonymous", email: "", role: "PRO" }}

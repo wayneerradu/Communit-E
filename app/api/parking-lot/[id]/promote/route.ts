@@ -8,5 +8,9 @@ export async function POST(
 ) {
   const { id } = await params;
   const sessionUser = await getSessionUser();
+  if (!sessionUser) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   return NextResponse.json(promoteIdea(id, sessionUser ?? undefined));
 }

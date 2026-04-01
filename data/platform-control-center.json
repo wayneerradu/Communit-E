@@ -179,8 +179,8 @@
       "userName": "Local Super Admin",
       "role": "SUPER_ADMIN",
       "createdAt": "2026-04-01T00:20:24.641Z",
-      "lastActivityAt": "2026-04-01T00:23:55.539Z",
-      "expiresAt": "2026-04-01T12:23:55.539Z",
+      "lastActivityAt": "2026-04-01T01:04:29.538Z",
+      "expiresAt": "2026-04-01T13:04:29.538Z",
       "status": "active",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0"
     }

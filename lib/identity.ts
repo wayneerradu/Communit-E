@@ -1,6 +1,17 @@
 ﻿import type { Role, SessionUser } from "@/types/domain";
 
 const DEFAULT_ALLOWED_DOMAIN = "unityincommunity.org.za";
+const DEFAULT_SUPER_ADMIN_EMAILS = new Set([
+  "wayne.erradu@unityincommunity.org.za",
+  "hello@unityincommunity.org.za"
+]);
+const DEFAULT_ADMIN_EMAILS = new Set([
+  "sarah.basson@unityincommunity.org.za",
+  "marvin.naicker@unityincommunity.org.za",
+  "nomasonto.ncgungane@unityincommunity.org.za",
+  "bronwynne.batstone@unityincommunity.org.za",
+  "vishal.kanhai@unityincommunity.org.za"
+]);
 
 function parseEmailList(value?: string) {
   return new Set(
@@ -13,6 +24,8 @@ function parseEmailList(value?: string) {
 
 export function getConfiguredWorkspaceUsers() {
   const emails = new Set<string>();
+  DEFAULT_SUPER_ADMIN_EMAILS.forEach((email) => emails.add(email));
+  DEFAULT_ADMIN_EMAILS.forEach((email) => emails.add(email));
 
   parseEmailList(process.env.SUPER_ADMIN_EMAILS).forEach((email) => emails.add(email));
   parseEmailList(process.env.ADMIN_EMAILS).forEach((email) => emails.add(email));
@@ -33,8 +46,8 @@ export function isAllowedWorkspaceEmail(email: string) {
 
 export function resolveRoleForEmail(email: string): Role {
   const normalizedEmail = email.trim().toLowerCase();
-  const superAdminEmails = parseEmailList(process.env.SUPER_ADMIN_EMAILS);
-  const adminEmails = parseEmailList(process.env.ADMIN_EMAILS);
+  const superAdminEmails = new Set([...DEFAULT_SUPER_ADMIN_EMAILS, ...parseEmailList(process.env.SUPER_ADMIN_EMAILS)]);
+  const adminEmails = new Set([...DEFAULT_ADMIN_EMAILS, ...parseEmailList(process.env.ADMIN_EMAILS)]);
 
   if (superAdminEmails.has(normalizedEmail)) {
     return "SUPER_ADMIN";

@@ -5,6 +5,7 @@ import { readFaultNotesStore, readFaultsStore, writeFaultNotesStore, writeFaults
 import { readInfrastructureStore, writeInfrastructureStore } from "@/lib/infrastructure-store";
 import { readMeetingMinutesStore, writeMeetingMinutesStore } from "@/lib/meeting-store";
 import { renderFaultEmailTemplate } from "@/lib/fault-email-templates";
+import { appendGovernanceAudit } from "@/lib/governance-audit-store";
 import { addAdminNotifications } from "@/lib/notification-store";
 import { readParkingLotStore, writeParkingLotStore } from "@/lib/parking-lot-store";
 import { readPlatformSettings } from "@/lib/platform-store";
@@ -365,6 +366,29 @@ function escalateThresholdDays(priority: Fault["priority"]) {
   return { plus: 4, plusplus: 7 };
 }
 
+const REASSIGNMENT_COOLDOWN_MS = 120 * 1000;
+const ESCALATION_IDEMPOTENCY_WINDOW_MS = 2 * 60 * 1000;
+
+function getEscalationDispatchKey(stage: "initial" | "plus" | "plusplus" | "reopened") {
+  return stage;
+}
+
+function isEscalationDuplicateWithinWindow(
+  fault: Fault,
+  stage: "plus" | "plusplus",
+  nowIso: string
+) {
+  const nowMs = new Date(nowIso).getTime();
+  const dispatchAt = fault.workflowDispatch?.[getEscalationDispatchKey(stage)];
+  if (dispatchAt) {
+    const delta = nowMs - new Date(dispatchAt).getTime();
+    if (Number.isFinite(delta) && delta >= 0 && delta < ESCALATION_IDEMPOTENCY_WINDOW_MS) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function canEscalateFaultLevel(
   fault: Fault,
   level: "plus" | "plusplus",
@@ -609,6 +633,10 @@ export function createFault(input: CreateFaultInput, actor?: FaultActor): Fault 
       }
     ],
     escalationHistory: [{ level: "internal", at: nowIso, byEmail: loggedBy.email }]
+    ,
+    workflowDispatch: {
+      initial: nowIso
+    }
   };
 
   faults.unshift(nextFault);
@@ -627,6 +655,21 @@ export function createFault(input: CreateFaultInput, actor?: FaultActor): Fault 
     "system"
   );
   writeFaultsStore(faults);
+  appendGovernanceAudit({
+    area: "faults",
+    entityId: nextFault.id,
+    action: "fault.created",
+    actorName: loggedBy.name,
+    actorEmail: loggedBy.email,
+    after: {
+      status: nextFault.status,
+      priority: nextFault.priority,
+      category: nextFault.category,
+      subCategory: nextFault.subCategory ?? null,
+      assignedToEmail: nextFault.assignedToEmail ?? null
+    },
+    detail: "Fault captured and initial escalation queued."
+  });
   void queueFaultCreatedTelegramAlerts(nextFault, duplicateOpenCount);
   void queueFaultWorkflowEmail({
     fault: nextFault,
@@ -699,18 +742,42 @@ export function escalateFaultLevel(
   ensureConcurrency(fault, options?.expectedUpdatedAt);
 
   const nowIso = new Date().toISOString();
+  const beforeSnapshot = {
+    escalationLevel: fault.escalationLevel ?? "none",
+    status: fault.status,
+    escalationCount: fault.escalationCount ?? 0
+  };
+  if (isEscalationDuplicateWithinWindow(fault, level, nowIso)) {
+    throw new Error("Duplicate escalation prevented. Please wait before retrying.");
+  }
+
   if (!canEscalateFaultLevel(fault, level, nowIso)) {
     throw new Error(`Escalate${level === "plusplus" ? "++" : "+"} is not due yet for this priority.`);
+  }
+
+  if (level === "plus" && (fault.escalationLevel === "plus" || fault.escalationLevel === "plusplus")) {
+    throw new Error("Escalate+ already triggered for this fault.");
+  }
+  if (level === "plusplus" && fault.escalationLevel === "plusplus") {
+    throw new Error("Escalate++ already triggered for this fault.");
   }
 
   if (level === "plus") {
     fault.internalEscalated = true;
     fault.escalationLevel = "plus";
+    fault.workflowDispatch = {
+      ...(fault.workflowDispatch ?? {}),
+      plus: nowIso
+    };
   }
   if (level === "plusplus") {
     fault.internalEscalated = true;
     fault.externalEscalated = true;
     fault.escalationLevel = "plusplus";
+    fault.workflowDispatch = {
+      ...(fault.workflowDispatch ?? {}),
+      plusplus: nowIso
+    };
   }
   fault.escalatedAt = fault.escalatedAt ?? nowIso;
   fault.updatedAt = nowIso;
@@ -738,6 +805,20 @@ export function escalateFaultLevel(
     "system"
   );
   writeFaultsStore(faults);
+  appendGovernanceAudit({
+    area: "faults",
+    entityId: fault.id,
+    action: level === "plusplus" ? "fault.escalated-plusplus" : "fault.escalated-plus",
+    actorName: actingUser.name,
+    actorEmail: actingUser.email,
+    before: beforeSnapshot,
+    after: {
+      escalationLevel: fault.escalationLevel,
+      status: fault.status,
+      escalationCount: fault.escalationCount ?? 0
+    },
+    detail: `Escalate${level === "plusplus" ? "++" : "+"} executed.`
+  });
   void queueFaultWorkflowEmail({
     fault,
     stage: level === "plusplus" ? "plusplus" : "plus",
@@ -773,6 +854,12 @@ export function updateFaultStatus(
   ensureConcurrency(fault, payload.expectedUpdatedAt);
   const nowIso = new Date().toISOString();
   const previousStatus = fault.status;
+  const beforeSnapshot = {
+    status: previousStatus,
+    feedbackStatus: fault.feedbackStatus ?? "pending",
+    escalationLevel: fault.escalationLevel ?? "none",
+    updatedAt: fault.updatedAt ?? null
+  };
 
   if (payload.status === "closed" && fault.residentId && fault.feedbackStatus !== "yes" && !payload.overrideReason?.trim()) {
     throw new Error("Resident feedback is still pending. Add an override reason to close this fault.");
@@ -811,6 +898,10 @@ export function updateFaultStatus(
     fault.feedbackStatus = "pending";
     fault.closedAt = undefined;
     fault.closedByAdminEmail = undefined;
+    fault.workflowDispatch = {
+      ...(fault.workflowDispatch ?? {}),
+      reopened: nowIso
+    };
     void queueFaultWorkflowEmail({
       fault,
       stage: "reopened",
@@ -834,6 +925,21 @@ export function updateFaultStatus(
     "system"
   );
   writeFaultsStore(faults);
+  appendGovernanceAudit({
+    area: "faults",
+    entityId: fault.id,
+    action: "fault.status-updated",
+    actorName: actingUser.name,
+    actorEmail: actingUser.email,
+    before: beforeSnapshot,
+    after: {
+      status: fault.status,
+      feedbackStatus: fault.feedbackStatus ?? "pending",
+      escalationLevel: fault.escalationLevel ?? "none",
+      updatedAt: fault.updatedAt ?? null
+    },
+    detail: `Status changed from ${previousStatus} to ${fault.status}.`
+  });
 
   return {
     fault,
@@ -856,6 +962,16 @@ export function updateFaultDetails(
 
   ensureConcurrency(fault, payload.expectedUpdatedAt);
   const nowIso = new Date().toISOString();
+  const beforeSnapshot = {
+    title: fault.title,
+    ethekwiniReference: fault.ethekwiniReference ?? null,
+    category: fault.category,
+    subCategory: fault.subCategory ?? null,
+    priority: fault.priority,
+    locationText: fault.locationText,
+    assignedToEmail: fault.assignedToEmail ?? null,
+    updatedAt: fault.updatedAt ?? null
+  };
   const audit: string[] = [];
 
   const trackField = <K extends keyof Fault>(field: K, nextValue: Fault[K]) => {
@@ -888,6 +1004,13 @@ export function updateFaultDetails(
     const nextAssignedEmail = payload.assignedToEmail?.trim() || undefined;
     const previousAssignedEmail = fault.assignedToEmail?.trim() || undefined;
     if (nextAssignedEmail !== previousAssignedEmail) {
+      if (previousAssignedEmail && fault.assignedAt) {
+        const elapsedMs = nowIso ? new Date(nowIso).getTime() - new Date(fault.assignedAt).getTime() : 0;
+        if (Number.isFinite(elapsedMs) && elapsedMs < REASSIGNMENT_COOLDOWN_MS) {
+          const remainingSeconds = Math.ceil((REASSIGNMENT_COOLDOWN_MS - elapsedMs) / 1000);
+          throw new Error(`Reassignment is locked for another ${remainingSeconds} second(s).`);
+        }
+      }
       trackField("assignedToEmail", nextAssignedEmail);
       trackField("assignedAdminName", nextAssignedEmail ? (payload.assignedAdminName ?? getFaultOwnerFromEmail(nextAssignedEmail)) : undefined);
       trackField("assignedAt", nowIso);
@@ -917,6 +1040,25 @@ export function updateFaultDetails(
     );
   }
   writeFaultsStore(faults);
+  appendGovernanceAudit({
+    area: "faults",
+    entityId: fault.id,
+    action: "fault.details-updated",
+    actorName: actingUser.name,
+    actorEmail: actingUser.email,
+    before: beforeSnapshot,
+    after: {
+      title: fault.title,
+      ethekwiniReference: fault.ethekwiniReference ?? null,
+      category: fault.category,
+      subCategory: fault.subCategory ?? null,
+      priority: fault.priority,
+      locationText: fault.locationText,
+      assignedToEmail: fault.assignedToEmail ?? null,
+      updatedAt: fault.updatedAt ?? null
+    },
+    detail: audit.join("; ")
+  });
 
   return { fault, notes: listFaultNotes(fault.id) };
 }
@@ -1793,6 +1935,22 @@ export function approvePRComm(id: string, actor?: Pick<SessionUser, "email" | "r
     item.status = "pending-approval";
   }
   writePRCommsStore(prComms);
+  appendGovernanceAudit({
+    area: "communications",
+    entityId: item.id,
+    action: "communication.approved",
+    actorName: approver.name,
+    actorEmail: approver.email,
+    before: {
+      status: item.status,
+      appCount: Math.max(0, item.appCount - 1)
+    },
+    after: {
+      status: item.status,
+      appCount: item.appCount
+    },
+    detail: `Communication approval recorded (${item.appCount}/2).`
+  });
 
   return item;
 }
@@ -1804,12 +1962,29 @@ export function sendPRComm(id: string) {
     throw new Error("Communication not found");
   }
 
-  if (item.approvers.length < 2) {
+  const uniqueApprovers = Array.from(new Set(item.approvers.map((entry) => entry.trim().toLowerCase()).filter(Boolean)));
+  const creatorEmail = item.createdByEmail?.trim().toLowerCase();
+  const validApprovers = creatorEmail
+    ? uniqueApprovers.filter((approver) => approver !== creatorEmail)
+    : uniqueApprovers;
+
+  if (validApprovers.length < 2) {
     throw new Error("Two unique admin approvals are required before sending");
   }
 
+  item.approvers = uniqueApprovers;
+  item.appCount = uniqueApprovers.length;
+  const beforeStatus = item.status;
   item.status = "sent";
   writePRCommsStore(prComms);
+  appendGovernanceAudit({
+    area: "communications",
+    entityId: item.id,
+    action: "communication.sent",
+    before: { status: beforeStatus, appCount: item.appCount },
+    after: { status: item.status, appCount: item.appCount },
+    detail: "Communication moved to sent after unique approvals."
+  });
   return item;
 }
 
@@ -1908,6 +2083,16 @@ export function voteForResolution(id: string, choice: string, voter = currentUse
     resolution.status = "passed";
   }
   writeResolutionsStore(resolutions);
+  appendGovernanceAudit({
+    area: "resolutions",
+    entityId: resolution.id,
+    action: "resolution.vote-cast",
+    actorName: voter,
+    actorEmail: voter,
+    before: { status: resolution.status, totalVotes: Math.max(0, resolution.votes.length - (existingVote ? 0 : 1)) },
+    after: { status: resolution.status, totalVotes: resolution.votes.length, choice },
+    detail: `Vote captured for option "${choice}".`
+  });
 
   return resolution;
 }

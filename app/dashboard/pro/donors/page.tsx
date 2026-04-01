@@ -4,7 +4,7 @@ import { getProData } from "@/lib/hub-data";
 
 export default async function ProDonorsPage() {
   const user = await getSessionUser();
-  const { prComms, socialCalendar, internationalObservances, plannerEvents, eventCampaigns, donors, donations } = await getProData();
+  const { prComms, socialCalendar, internationalObservances, plannerEvents, eventCampaigns, wordpress, donors, donations } = await getProData();
 
   return (
     <ProConsole
@@ -13,6 +13,7 @@ export default async function ProDonorsPage() {
       internationalObservances={internationalObservances}
       plannerEvents={plannerEvents}
       eventCampaigns={eventCampaigns}
+      wordpress={wordpress}
       donors={donors}
       donations={donations}
       currentUser={user ?? { id: "anonymous", name: "Anonymous", email: "", role: "PRO" }}

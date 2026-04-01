@@ -41,9 +41,9 @@ export async function POST(request: Request) {
     });
   }
 
-  if (user && process.env.NODE_ENV !== "development") {
+  if (isAllowedWorkspaceEmail(normalizedEmail)) {
     return NextResponse.json(
-      { error: "Password login is disabled outside development. Use Google sign-in." },
+      { error: "Password login is disabled for workspace users. Continue with Google Workspace." },
       { status: 403 }
     );
   }

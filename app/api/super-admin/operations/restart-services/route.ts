@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { z } from "zod";
+import { getSessionUser } from "@/lib/auth";
 import { updatePlatformServices } from "@/lib/platform-store";
 
 const execFileAsync = promisify(execFile);
@@ -11,6 +12,11 @@ const schema = z.object({
 });
 
 export async function POST(request: Request) {
+  const user = await getSessionUser();
+  if (!user || user.role !== "SUPER_ADMIN") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { serviceIds } = schema.parse(await request.json());
   const now = new Date().toISOString();
   const allowControl = process.env.ALLOW_SERVICE_CONTROL === "true";

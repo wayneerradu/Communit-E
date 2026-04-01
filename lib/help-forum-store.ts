@@ -102,12 +102,12 @@ export async function findHelpForumThread(threadId: string) {
 }
 
 export async function createHelpForumThread(input: CreateThreadInput, actor: SessionUser) {
-  const module = normalizeString(input.module);
+  const moduleName = normalizeString(input.module);
   const page = normalizeString(input.page);
   const title = normalizeString(input.title);
   const body = normalizeString(input.body);
 
-  if (!module || !page || !title || !body) {
+  if (!moduleName || !page || !title || !body) {
     throw new Error("Module, page, title, and first comment are required.");
   }
 
@@ -124,7 +124,7 @@ export async function createHelpForumThread(input: CreateThreadInput, actor: Ses
 
   const thread: HelpForumThread = {
     id: threadId,
-    module,
+    module: moduleName,
     page,
     title,
     type: input.type,

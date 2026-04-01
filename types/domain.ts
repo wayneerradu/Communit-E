@@ -54,6 +54,11 @@ export type AppNotification = {
   title: string;
   detail: string;
   channel: "in-app" | "telegram" | "email";
+  deliveryStatus?: "pending" | "queued" | "sent" | "failed";
+  deliveryAttempts?: number;
+  lastDeliveryAttemptAt?: string;
+  nextRetryAt?: string;
+  deliveryError?: string;
   audience: "admins";
   targetEmails?: string[];
   createdAt: string;
@@ -156,6 +161,12 @@ export type Fault = {
     at: string;
     byEmail?: string;
   }>;
+  workflowDispatch?: {
+    initial?: string;
+    plus?: string;
+    plusplus?: string;
+    reopened?: string;
+  };
 };
 
 export type FaultNote = {
@@ -215,6 +226,11 @@ export type PRComm = {
   body: string;
   channel: string;
   mediaRefs?: string[];
+  wordpressPostId?: number;
+  wordpressPostUrl?: string;
+  wordpressCategory?: string;
+  wordpressStatus?: "draft" | "publish";
+  wordpressPublishedAt?: string;
   status: PRCommStatus;
   approvers: string[];
   appCount: number;
@@ -558,6 +574,15 @@ export type PlatformSettings = {
       bodyTemplate: string;
       signature: string;
     };
+  };
+  wordpress: {
+    enabled: boolean;
+    baseUrl: string;
+    username: string;
+    appPassword: string;
+    defaultStatus: "draft" | "publish";
+    defaultCategory: string;
+    categories: string[];
   };
   sessionPolicy: {
     idleTimeoutMinutes: number;

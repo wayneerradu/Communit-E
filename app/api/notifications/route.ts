@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getSessionUser } from "@/lib/auth";
-import { listVisibleAdminNotifications, markAdminNotificationsRead } from "@/lib/notification-store";
-import { readPlatformSettings } from "@/lib/platform-store";
+import { listVisibleAdminNotifications, markAdminNotificationsRead, processNotificationDeliveryQueue } from "@/lib/notification-store";
 import { syncMailboxNotifications } from "@/lib/mailbox-notifications";
 import { runTelegramCriticalAlertSweep } from "@/lib/telegram-critical-alerts";
-import { processDeferredTelegramQueue } from "@/lib/telegram";
 
 const schema = z.object({
   action: z.enum(["mark-all-read", "mark-read"]),
@@ -21,7 +19,7 @@ export async function GET() {
 
   await syncMailboxNotifications();
   await runTelegramCriticalAlertSweep();
-  await processDeferredTelegramQueue(await readPlatformSettings());
+  await processNotificationDeliveryQueue();
   const notifications = await listVisibleAdminNotifications(user.email);
   const normalizedEmail = user.email.trim().toLowerCase();
 

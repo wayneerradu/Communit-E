@@ -49,12 +49,14 @@ export function CommunicationSettingsConsole({ initialSettings }: Props) {
   const [isPending, startTransition] = useTransition();
   const [actionState, setActionState] = useState<{ tone: "success" | "warning"; message: string } | null>(null);
   const [showDemoBotToken, setShowDemoBotToken] = useState(false);
+  const [showWordpressPassword, setShowWordpressPassword] = useState(false);
   const [activeTemplateKey, setActiveTemplateKey] = useState<TemplateKey>("faultInitialEscalation");
   const [activeTemplateField, setActiveTemplateField] = useState<TemplateField>("bodyTemplate");
   const [isCouncillorEditing, setIsCouncillorEditing] = useState(false);
   const [isEmailEditing, setIsEmailEditing] = useState(false);
   const [isTelegramEditing, setIsTelegramEditing] = useState(false);
   const [isTemplateEditing, setIsTemplateEditing] = useState(false);
+  const [isWordpressEditing, setIsWordpressEditing] = useState(false);
 
   const activeTemplate = settings.communicationTemplates[activeTemplateKey];
   const councillor = settings.communicationSettings.councillor ?? {
@@ -140,7 +142,8 @@ export function CommunicationSettingsConsole({ initialSettings }: Props) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               communicationSettings: settings.communicationSettings,
-              communicationTemplates: settings.communicationTemplates
+              communicationTemplates: settings.communicationTemplates,
+              wordpress: settings.wordpress
             })
           });
           const payload = (await response.json()) as { item?: PlatformSettings; error?: string };
@@ -281,6 +284,174 @@ export function CommunicationSettingsConsole({ initialSettings }: Props) {
                 }
                 placeholder="+27..."
               />
+            </label>
+          </div>
+        </article>
+
+        <article className="surface-panel">
+          <div className="section-header">
+            <div>
+              <h2>WordPress Blog Integration</h2>
+              <p>Publish approved PRO drafts directly to your self-hosted WordPress site.</p>
+            </div>
+            <span className="status-chip status-chip-default">{settings.wordpress.enabled ? "ENABLED" : "DISABLED"}</span>
+          </div>
+          <div className="action-row">
+            {!isWordpressEditing ? (
+              <button type="button" className="button-secondary" onClick={() => setIsWordpressEditing(true)}>
+                Edit WordPress Settings
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="button-secondary"
+                  onClick={() => {
+                    setSettings((current) => ({
+                      ...current,
+                      wordpress: { ...lastSavedSettings.wordpress }
+                    }));
+                    setIsWordpressEditing(false);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="button-primary"
+                  disabled={isPending}
+                  onClick={() => {
+                    saveCommunicationSettings("WordPress integration settings saved.");
+                    setIsWordpressEditing(false);
+                  }}
+                >
+                  Save WordPress Settings
+                </button>
+              </>
+            )}
+          </div>
+          <div className="form-grid">
+            <label className="toggle-field">
+              <input
+                type="checkbox"
+                checked={settings.wordpress.enabled}
+                disabled={!isWordpressEditing}
+                onChange={(event) =>
+                  setSettings((current) => ({
+                    ...current,
+                    wordpress: {
+                      ...current.wordpress,
+                      enabled: event.target.checked
+                    }
+                  }))
+                }
+              />
+              <span>Enable WordPress Publishing</span>
+            </label>
+            <label className="field field-wide">
+              <span>WordPress Base URL</span>
+              <input
+                value={settings.wordpress.baseUrl}
+                disabled={!isWordpressEditing}
+                onChange={(event) =>
+                  setSettings((current) => ({
+                    ...current,
+                    wordpress: {
+                      ...current.wordpress,
+                      baseUrl: event.target.value
+                    }
+                  }))
+                }
+                placeholder="https://yourdomain.com"
+              />
+            </label>
+            <label className="field">
+              <span>WordPress Username</span>
+              <input
+                value={settings.wordpress.username}
+                disabled={!isWordpressEditing}
+                onChange={(event) =>
+                  setSettings((current) => ({
+                    ...current,
+                    wordpress: {
+                      ...current.wordpress,
+                      username: event.target.value
+                    }
+                  }))
+                }
+              />
+            </label>
+            <label className="field">
+              <span>Application Password</span>
+              <div className="secret-field-row">
+                <input
+                  type={showWordpressPassword ? "text" : "password"}
+                  value={settings.wordpress.appPassword}
+                  disabled={!isWordpressEditing}
+                  onChange={(event) =>
+                    setSettings((current) => ({
+                      ...current,
+                      wordpress: {
+                        ...current.wordpress,
+                        appPassword: event.target.value
+                      }
+                    }))
+                  }
+                />
+                <button
+                  type="button"
+                  className="secret-toggle-button"
+                  disabled={!isWordpressEditing}
+                  onClick={() => setShowWordpressPassword((current) => !current)}
+                >
+                  {showWordpressPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </label>
+            <label className="field">
+              <span>Default Post Status</span>
+              <select
+                value={settings.wordpress.defaultStatus}
+                disabled={!isWordpressEditing}
+                onChange={(event) =>
+                  setSettings((current) => ({
+                    ...current,
+                    wordpress: {
+                      ...current.wordpress,
+                      defaultStatus: event.target.value as "draft" | "publish"
+                    }
+                  }))
+                }
+              >
+                <option value="draft">Draft</option>
+                <option value="publish">Publish</option>
+              </select>
+            </label>
+            <label className="field">
+              <span>Default Category</span>
+              <select
+                value={settings.wordpress.defaultCategory}
+                disabled={!isWordpressEditing}
+                onChange={(event) =>
+                  setSettings((current) => ({
+                    ...current,
+                    wordpress: {
+                      ...current.wordpress,
+                      defaultCategory: event.target.value
+                    }
+                  }))
+                }
+              >
+                {settings.wordpress.categories.map((item) => (
+                  <option key={`wp-default-${item}`} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field field-wide">
+              <span>Allowed Categories</span>
+              <textarea value={settings.wordpress.categories.join(", ")} readOnly rows={2} />
             </label>
           </div>
         </article>

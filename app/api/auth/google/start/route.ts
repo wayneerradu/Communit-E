@@ -25,7 +25,7 @@ export async function GET(request: Request) {
   cookieStore.set("google_oauth_state", state, {
     httpOnly: true,
     sameSite: "lax",
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     path: "/"
   });
   const purposeParam = url.searchParams.get("purpose");
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
   cookieStore.set("google_oauth_purpose", purpose, {
     httpOnly: true,
     sameSite: "lax",
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     path: "/"
   });
 

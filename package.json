@@ -11,12 +11,13 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "node prisma/seed.mjs",
+    "db:backfill-json": "node scripts/backfill-json-store-to-db.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
     "@googlemaps/markerclusterer": "^2.6.2",
-    "@prisma/client": "^6.5.0",
+    "@prisma/client": "^6.19.2",
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",
     "jspdf": "^4.2.1",
@@ -36,7 +37,7 @@
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.1",
     "playwright": "^1.58.2",
-    "prisma": "^6.5.0",
+    "prisma": "^6.19.2",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8"
   }

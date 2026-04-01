@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": "idea-test-1",
+    "title": "Install shaded benches near playground",
+    "justification": "Residents need shaded seating in summer.",
+    "priority": "medium",
+    "status": "open",
+    "threshold": 10,
+    "votes": []
+  }
+]

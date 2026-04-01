@@ -456,6 +456,26 @@ export const platformSettings: PlatformSettings = {
       signature: "Regards,\n{officeBearerName}\nOffice Bearer, Unity In Community\n{officeBearerEmail}"
     }
   },
+  wordpress: {
+    enabled: false,
+    baseUrl: "",
+    username: "",
+    appPassword: "",
+    defaultStatus: "draft",
+    defaultCategory: "News",
+    categories: [
+      "City Bylaws",
+      "Deep Dive",
+      "How to Guides",
+      "Initiatives",
+      "Legacy Projects",
+      "Media",
+      "Meetings",
+      "Monthly Scoredcard",
+      "News",
+      "Tips"
+    ]
+  },
   sessionPolicy: {
     idleTimeoutMinutes: 30,
     absoluteSessionHours: 12,

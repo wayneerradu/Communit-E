@@ -4,7 +4,7 @@ import { setSessionUser } from "@/lib/auth";
 import { isAllowedWorkspaceEmail } from "@/lib/identity";
 import { writeGoogleCalendarConnection } from "@/lib/google-calendar-store";
 import { readGoogleMailboxConnection, writeGoogleMailboxConnection } from "@/lib/google-mailbox-store";
-import { updatePlatformSettings } from "@/lib/platform-store";
+import { readPlatformSettings, updatePlatformSettings } from "@/lib/platform-store";
 import { upsertWorkspaceUser } from "@/lib/users";
 
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -12,6 +12,9 @@ const GOOGLE_USERINFO_URL = "https://openidconnect.googleapis.com/v1/userinfo";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  const settings = await readPlatformSettings();
+  const appBaseUrl = process.env.APP_URL?.trim() || url.origin;
+  const redirectTargetBase = new URL(appBaseUrl);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
   const error = url.searchParams.get("error");
@@ -20,21 +23,24 @@ export async function GET(request: Request) {
   const oauthPurpose = store.get("google_oauth_purpose")?.value ?? "workspace";
 
   if (error) {
-    return NextResponse.redirect(new URL(`/dashboard/super-admin?google=error&reason=${encodeURIComponent(error)}`, url.origin));
+    return NextResponse.redirect(new URL(`/dashboard/super-admin?google=error&reason=${encodeURIComponent(error)}`, redirectTargetBase));
   }
 
   if (!code || !state || !savedState || state !== savedState) {
-    return NextResponse.redirect(new URL("/dashboard/super-admin?google=invalid-state", url.origin));
+    return NextResponse.redirect(new URL("/dashboard/super-admin?google=invalid-state", redirectTargetBase));
   }
 
   store.delete("google_oauth_state");
   store.delete("google_oauth_purpose");
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI ?? `${url.origin}/api/auth/google/callback`;
+  const redirectUri =
+    process.env.GOOGLE_REDIRECT_URI ??
+    settings.googleWorkspace.callbackUrl ??
+    `${appBaseUrl.replace(/\/+$/, "")}/api/auth/google/callback`;
 
   if (!clientId || !clientSecret) {
-    return NextResponse.redirect(new URL("/dashboard/super-admin?google=config-missing", url.origin));
+    return NextResponse.redirect(new URL("/dashboard/super-admin?google=config-missing", redirectTargetBase));
   }
 
   try {
@@ -51,7 +57,7 @@ export async function GET(request: Request) {
     });
 
     if (!tokenResponse.ok) {
-      return NextResponse.redirect(new URL("/dashboard/super-admin?google=token-error", url.origin));
+      return NextResponse.redirect(new URL("/dashboard/super-admin?google=token-error", redirectTargetBase));
     }
 
     const tokenPayload = (await tokenResponse.json()) as {
@@ -61,7 +67,7 @@ export async function GET(request: Request) {
       scope?: string;
     };
     if (!tokenPayload.access_token) {
-      return NextResponse.redirect(new URL("/dashboard/super-admin?google=missing-access-token", url.origin));
+      return NextResponse.redirect(new URL("/dashboard/super-admin?google=missing-access-token", redirectTargetBase));
     }
 
     const userResponse = await fetch(GOOGLE_USERINFO_URL, {
@@ -71,12 +77,12 @@ export async function GET(request: Request) {
     });
 
     if (!userResponse.ok) {
-      return NextResponse.redirect(new URL("/dashboard/super-admin?google=userinfo-error", url.origin));
+      return NextResponse.redirect(new URL("/dashboard/super-admin?google=userinfo-error", redirectTargetBase));
     }
 
     const userPayload = (await userResponse.json()) as { email?: string; name?: string };
     if (!userPayload.email || !isAllowedWorkspaceEmail(userPayload.email)) {
-      return NextResponse.redirect(new URL("/dashboard/super-admin?google=forbidden-domain", url.origin));
+      return NextResponse.redirect(new URL("/dashboard/super-admin?google=forbidden-domain", redirectTargetBase));
     }
     const connectedEmail = userPayload.email;
 
@@ -109,7 +115,7 @@ export async function GET(request: Request) {
         updatedAt: new Date().toISOString()
       }));
 
-      return NextResponse.redirect(new URL("/dashboard/super-admin?google-calendar=connected", url.origin));
+      return NextResponse.redirect(new URL("/dashboard/super-admin?google-calendar=connected", redirectTargetBase));
     }
 
     if (oauthPurpose === "mailbox") {
@@ -142,14 +148,14 @@ export async function GET(request: Request) {
         updatedAt: new Date().toISOString()
       }));
 
-      return NextResponse.redirect(new URL("/dashboard/super-admin?google-mailbox=connected", url.origin));
+      return NextResponse.redirect(new URL("/dashboard/super-admin?google-mailbox=connected", redirectTargetBase));
     }
 
     const sessionUser = await upsertWorkspaceUser(connectedEmail, userPayload.name);
     await setSessionUser(sessionUser, request.headers.get("user-agent") ?? undefined);
 
-    return NextResponse.redirect(new URL("/dashboard?google=connected", url.origin));
+    return NextResponse.redirect(new URL("/dashboard?google=connected", redirectTargetBase));
   } catch {
-    return NextResponse.redirect(new URL("/dashboard/super-admin?google=callback-failed", url.origin));
+    return NextResponse.redirect(new URL("/dashboard/super-admin?google=callback-failed", redirectTargetBase));
   }
 }

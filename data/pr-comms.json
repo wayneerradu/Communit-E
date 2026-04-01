@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "pr-test-1",
+    "headline": "Weekend cleanup drive",
+    "body": "Please join the cleanup drive this Saturday.",
+    "channel": "whatsapp",
+    "status": "sent",
+    "approvers": [
+      "admin-one@example.com",
+      "admin-two@example.com"
+    ],
+    "appCount": 2
+  }
+]

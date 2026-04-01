@@ -1,1 +1,92 @@
-[]
+[
+  {
+    "id": "fault-note-10",
+    "faultId": "fault-1",
+    "body": "Escalate+ triggered by Naledi Mokoena (naledi@unityincommunity.org.za) for fault-1.",
+    "createdAt": "2026-04-01T13:34:14.968Z",
+    "authorName": "Naledi Mokoena",
+    "source": "system",
+    "visibility": "internal"
+  },
+  {
+    "id": "fault-note-9",
+    "faultId": "fault-1",
+    "body": "Fault captured by Naledi Mokoena (naledi@unityincommunity.org.za) and assigned as escalation owner. Initial escalation email queue triggered.",
+    "createdAt": "2026-04-01T13:34:14.942Z",
+    "authorName": "Naledi Mokoena",
+    "source": "system",
+    "visibility": "internal"
+  },
+  {
+    "id": "fault-note-8",
+    "faultId": "fault-1",
+    "body": "Escalate+ triggered by Naledi Mokoena (naledi@unityincommunity.org.za) for fault-1.",
+    "createdAt": "2026-04-01T13:33:02.363Z",
+    "authorName": "Naledi Mokoena",
+    "source": "system",
+    "visibility": "internal"
+  },
+  {
+    "id": "fault-note-7",
+    "faultId": "fault-1",
+    "body": "Fault captured by Naledi Mokoena (naledi@unityincommunity.org.za) and assigned as escalation owner. Initial escalation email queue triggered.",
+    "createdAt": "2026-04-01T13:33:02.320Z",
+    "authorName": "Naledi Mokoena",
+    "source": "system",
+    "visibility": "internal"
+  },
+  {
+    "id": "fault-note-6",
+    "faultId": "fault-1",
+    "body": "Fault captured by Naledi Mokoena (naledi@unityincommunity.org.za) and assigned as escalation owner. Initial escalation email queue triggered.",
+    "createdAt": "2026-04-01T13:32:02.471Z",
+    "authorName": "Naledi Mokoena",
+    "source": "system",
+    "visibility": "internal"
+  },
+  {
+    "id": "fault-note-5",
+    "faultId": "fault-1",
+    "body": "Escalate+ triggered by Naledi Mokoena (naledi@unityincommunity.org.za) for fault-1.",
+    "createdAt": "2026-04-01T08:07:51.463Z",
+    "authorName": "Naledi Mokoena",
+    "source": "system",
+    "visibility": "internal"
+  },
+  {
+    "id": "fault-note-4",
+    "faultId": "fault-1",
+    "body": "Fault captured by Naledi Mokoena (naledi@unityincommunity.org.za) and assigned as escalation owner. Initial escalation email queue triggered.",
+    "createdAt": "2026-04-01T08:07:51.452Z",
+    "authorName": "Naledi Mokoena",
+    "source": "system",
+    "visibility": "internal"
+  },
+  {
+    "id": "fault-note-3",
+    "faultId": "fault-1",
+    "body": "Escalate+ triggered by Naledi Mokoena (naledi@unityincommunity.org.za) for fault-1.",
+    "createdAt": "2026-04-01T07:41:47.190Z",
+    "authorName": "Naledi Mokoena",
+    "source": "system",
+    "visibility": "internal"
+  },
+  {
+    "id": "fault-note-2",
+    "faultId": "fault-1",
+    "body": "Fault captured by Naledi Mokoena (naledi@unityincommunity.org.za) and assigned as escalation owner. Initial escalation email queue triggered.",
+    "createdAt": "2026-04-01T07:41:47.176Z",
+    "authorName": "Naledi Mokoena",
+    "source": "system",
+    "visibility": "internal"
+  },
+  {
+    "id": "fault-note-1",
+    "faultId": "fault-13",
+    "body": "Fault captured by Naledi Mokoena (naledi@unityincommunity.org.za) and assigned as escalation owner. Initial escalation email queue triggered.",
+    "createdAt": "2026-04-01T07:34:49.504Z",
+    "authorName": "Naledi Mokoena",
+    "source": "system",
+    "visibility": "internal"
+  }
+]

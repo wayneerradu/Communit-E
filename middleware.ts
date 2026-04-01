@@ -19,6 +19,20 @@ function parsePositiveInt(value: string | undefined, fallback: number) {
 }
 
 function getRatePolicy(pathname: string): RatePolicy | null {
+  if (pathname === "/api/auth/login") {
+    return {
+      limit: parsePositiveInt(process.env.AUTH_LOGIN_RATE_LIMIT, 20),
+      windowMs: parsePositiveInt(process.env.AUTH_LOGIN_RATE_WINDOW_SECONDS, 15 * 60) * 1000
+    };
+  }
+
+  if (pathname === "/api/auth/forgot-password" || pathname === "/api/auth/reset-password") {
+    return {
+      limit: parsePositiveInt(process.env.AUTH_PASSWORD_RATE_LIMIT, 15),
+      windowMs: parsePositiveInt(process.env.AUTH_PASSWORD_RATE_WINDOW_SECONDS, 15 * 60) * 1000
+    };
+  }
+
   if (pathname === "/api/public/join") {
     return {
       limit: parsePositiveInt(process.env.PUBLIC_JOIN_RATE_LIMIT, 20),
@@ -37,6 +51,13 @@ function getRatePolicy(pathname: string): RatePolicy | null {
     return {
       limit: parsePositiveInt(process.env.PUBLIC_DASHBOARD_RATE_LIMIT, 300),
       windowMs: parsePositiveInt(process.env.PUBLIC_DASHBOARD_RATE_WINDOW_SECONDS, 5 * 60) * 1000
+    };
+  }
+
+  if (pathname.startsWith("/api/") && !pathname.startsWith("/api/jobs/")) {
+    return {
+      limit: parsePositiveInt(process.env.API_RATE_LIMIT, 300),
+      windowMs: parsePositiveInt(process.env.API_RATE_WINDOW_SECONDS, 5 * 60) * 1000
     };
   }
 
@@ -146,6 +167,23 @@ function blockedResponse(request: NextRequest, status: number, message: string, 
   });
 }
 
+function isMutationMethod(method: string) {
+  return method === "POST" || method === "PATCH" || method === "PUT" || method === "DELETE";
+}
+
+function isCsrfExemptPath(pathname: string) {
+  return pathname.startsWith("/api/jobs/");
+}
+
+function getOriginFromReferer(referer: string | null) {
+  if (!referer) return null;
+  try {
+    return new URL(referer).origin;
+  } catch {
+    return null;
+  }
+}
+
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const method = request.method.toUpperCase();
@@ -170,6 +208,17 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  if (pathname.startsWith("/api/") && isMutationMethod(method) && !isCsrfExemptPath(pathname)) {
+    const allowedOrigins = getAllowedOrigins();
+    const origin = request.headers.get("origin")?.trim() ?? null;
+    const refererOrigin = getOriginFromReferer(request.headers.get("referer"));
+    const sourceOrigin = origin ?? refererOrigin;
+
+    if (!sourceOrigin || !allowedOrigins.has(sourceOrigin)) {
+      return blockedResponse(request, 403, "CSRF protection blocked this request.");
+    }
+  }
+
   const policy = getRatePolicy(pathname);
   if (policy) {
     const key = `${pathname}:${clientIp}`;
@@ -189,5 +238,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/public-dashboard/:path*", "/api/public/join", "/api/public/config"]
+  matcher: ["/public-dashboard/:path*", "/api/:path*"]
 };

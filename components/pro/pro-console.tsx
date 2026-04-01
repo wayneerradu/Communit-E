@@ -7,6 +7,7 @@ import type {
   Donation,
   Donor,
   GlobalSearchItem,
+  PlatformSettings,
   PRComm,
   ProEventCampaignItem,
   SessionUser,
@@ -19,6 +20,7 @@ type ProConsoleProps = {
   internationalObservances: SocialCalendarItem[];
   plannerEvents: PlannerCalendarItem[];
   eventCampaigns: ProEventCampaignItem[];
+  wordpress: PlatformSettings["wordpress"];
   donors: Donor[];
   donations: Donation[];
   currentUser: SessionUser;
@@ -81,6 +83,7 @@ export function ProConsole({
   internationalObservances,
   plannerEvents,
   eventCampaigns,
+  wordpress,
   donors,
   donations,
   currentUser,
@@ -99,9 +102,11 @@ export function ProConsole({
   const [message, setMessage] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const [isHolidaySaving, setIsHolidaySaving] = useState(false);
+  const [isWordpressBusy, setIsWordpressBusy] = useState(false);
   const [isDraftingHighlighted, setIsDraftingHighlighted] = useState(false);
   const [isHolidayFormOpen, setIsHolidayFormOpen] = useState(false);
   const [isEventCampaignFormOpen, setIsEventCampaignFormOpen] = useState(false);
+  const [wordpressCategoryById, setWordpressCategoryById] = useState<Record<string, string>>({});
   const firstApprovalItem = prItems.find((item) => item.status === "pending-approval" || item.status === "approved");
   const [highlightedPRId, setHighlightedPRId] = useState(focusPRId ?? initialPRComms[0]?.id ?? "");
   const jumpTargetId = highlightedPRId ? `pro-focus-${highlightedPRId}` : "";
@@ -168,6 +173,18 @@ export function ProConsole({
   useEffect(() => {
     setEventsCampaigns(eventCampaigns);
   }, [eventCampaigns]);
+
+  useEffect(() => {
+    setWordpressCategoryById((current) => {
+      const next = { ...current };
+      prItems.forEach((item) => {
+        if (!next[item.id]) {
+          next[item.id] = wordpress.defaultCategory;
+        }
+      });
+      return next;
+    });
+  }, [prItems, wordpress.defaultCategory]);
 
   useEffect(() => {
     if (focusPRId) {
@@ -349,6 +366,37 @@ export function ProConsole({
     }
   }
 
+  async function publishToWordPress(id: string) {
+    setIsWordpressBusy(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch("/api/pro/wordpress/publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prCommId: id,
+          category: wordpressCategoryById[id] ?? wordpress.defaultCategory
+        })
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to publish to WordPress.");
+      }
+
+      setPrItems((current) => current.map((item) => (item.id === payload.item.id ? payload.item : item)));
+      setMessage(
+        payload.wordpress?.url
+          ? `Published to WordPress. Open post: ${payload.wordpress.url}`
+          : "Published to WordPress successfully."
+      );
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to publish to WordPress.");
+    } finally {
+      setIsWordpressBusy(false);
+    }
+  }
+
   function prefillHolidayDraft(item: SocialCalendarItem) {
     setForm({
       headline: item.holidayName,
@@ -520,9 +568,17 @@ export function ProConsole({
                     </button>
                   ) : null}
                 </div>
+                <p style={{ margin: "0.25rem 0 0.6rem" }}>
+                  For WordPress posts, paste a public image/file URL here. Local file picks are saved as labels only.
+                </p>
                 <div className="dashboard-stack">
                   {form.mediaRefs.map((mediaRef, index) => (
                     <div key={`media-ref-${index}`} className="dashboard-actions-row">
+                      <input
+                        value={mediaRef}
+                        onChange={(event) => updateMediaRef(index, event.target.value)}
+                        placeholder="https://... (public media URL)"
+                      />
                       <input type="file" onChange={(event) => updateMediaRef(index, event.target.files?.[0]?.name ?? "")} />
                       {mediaRef ? <span className="tag">{mediaRef}</span> : null}
                       {form.mediaRefs.length > 1 ? (
@@ -572,6 +628,12 @@ export function ProConsole({
                     <span className="tag">Approvals: {item.appCount}</span>
                     {item.createdByName ? <span className="tag">Drafted by: {item.createdByName}</span> : null}
                     {item.mediaRefs?.length ? <span className="tag">Media: {item.mediaRefs.length}</span> : null}
+                    {item.wordpressPostId ? <span className="tag">WordPress Post ID: {item.wordpressPostId}</span> : null}
+                    {item.wordpressPostUrl ? (
+                      <a className="tag" href={item.wordpressPostUrl} target="_blank" rel="noreferrer">
+                        Open WordPress Post
+                      </a>
+                    ) : null}
                   </div>
                   {item.mediaRefs?.length ? (
                     <div className="meta-row">
@@ -598,6 +660,27 @@ export function ProConsole({
                     </button>
                     <button className="button-primary" type="button" onClick={() => sendItem(item.id)} disabled={isBusy || item.status !== "approved"}>
                       Send
+                    </button>
+                    <select
+                      value={wordpressCategoryById[item.id] ?? wordpress.defaultCategory}
+                      onChange={(event) =>
+                        setWordpressCategoryById((current) => ({ ...current, [item.id]: event.target.value }))
+                      }
+                      disabled={!wordpress.enabled || isWordpressBusy || item.status !== "approved"}
+                    >
+                      {wordpress.categories.map((category) => (
+                        <option key={`wp-cat-${item.id}-${category}`} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      className="button-secondary"
+                      type="button"
+                      onClick={() => publishToWordPress(item.id)}
+                      disabled={!wordpress.enabled || isWordpressBusy || item.status !== "approved"}
+                    >
+                      {isWordpressBusy ? "Publishing..." : "Publish Live to WordPress"}
                     </button>
                   </div>
                 </article>
