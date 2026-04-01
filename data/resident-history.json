@@ -1,0 +1,82 @@
+[
+  {
+    "id": "resident-history-10",
+    "createdAt": "2026-03-28T22:01:52.955Z",
+    "residentId": "res-1",
+    "title": "Resident record viewed",
+    "detail": "Local Super Admin (superadmin@unityincommunity.org.za) viewed this resident record.",
+    "tone": "default"
+  },
+  {
+    "id": "resident-history-9",
+    "createdAt": "2026-03-28T19:35:12.498Z",
+    "residentId": "res-1",
+    "title": "Resident record viewed",
+    "detail": "Local Super Admin (superadmin@unityincommunity.org.za) viewed this resident record.",
+    "tone": "default"
+  },
+  {
+    "id": "resident-history-8",
+    "createdAt": "2026-03-28T18:50:58.802Z",
+    "residentId": "res-1",
+    "title": "Resident record viewed",
+    "detail": "Local Super Admin (superadmin@unityincommunity.org.za) viewed this resident record.",
+    "tone": "default"
+  },
+  {
+    "id": "resident-history-7",
+    "createdAt": "2026-03-28T18:39:05.964Z",
+    "residentId": "res-1",
+    "title": "Resident record viewed",
+    "detail": "Local Super Admin (superadmin@unityincommunity.org.za) viewed this resident record.",
+    "tone": "default"
+  },
+  {
+    "id": "resident-history-6",
+    "createdAt": "2026-03-28T18:24:43.907Z",
+    "residentId": "res-1",
+    "title": "Resident details updated",
+    "detail": "Local Super Admin (superadmin@unityincommunity.org.za) updated this resident. Resident Type changed from \"resident\" to \"admin\".",
+    "tone": "default"
+  },
+  {
+    "id": "resident-history-5",
+    "createdAt": "2026-03-28T18:24:33.194Z",
+    "residentId": "res-1",
+    "title": "Resident record viewed",
+    "detail": "Local Super Admin (superadmin@unityincommunity.org.za) viewed this resident record.",
+    "tone": "default"
+  },
+  {
+    "id": "resident-history-4",
+    "createdAt": "2026-03-28T18:10:19.748Z",
+    "residentId": "res-1",
+    "title": "Resident record viewed",
+    "detail": "Local Super Admin (superadmin@unityincommunity.org.za) viewed this resident record.",
+    "tone": "default"
+  },
+  {
+    "id": "resident-history-3",
+    "createdAt": "2026-03-28T17:20:45.664Z",
+    "residentId": "res-1",
+    "title": "Resident details updated",
+    "detail": "Local Super Admin (superadmin@unityincommunity.org.za) updated this resident. Physical Address changed from \"158 Mount Vernon Rd, Mount Vernon, Durban, 4094, South Africa\" to \"158 Woodlands Ave, Mount Vernon, Durban, 4094, South Africa\".",
+    "tone": "default"
+  },
+  {
+    "id": "resident-history-2",
+    "createdAt": "2026-03-28T17:15:15.194Z",
+    "residentId": "res-1",
+    "title": "Resident record viewed",
+    "detail": "Local Super Admin (superadmin@unityincommunity.org.za) viewed this resident record.",
+    "tone": "default"
+  },
+  {
+    "id": "resident-history-1",
+    "createdAt": "2026-03-28T17:15:12.725Z",
+    "residentId": "res-1",
+    "title": "Resident created",
+    "detail": "Resident was added directly in CommUNIT-E by Local Super Admin (superadmin@unityincommunity.org.za) and activated immediately.",
+    "tone": "success"
+  }
+]

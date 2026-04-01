@@ -1,0 +1,27 @@
+[
+  {
+    "id": "minute-1",
+    "title": "Weekly operations stand-up",
+    "meetingAt": "2026-03-25T09:00:00Z",
+    "attendees": [
+      "Naledi Mokoena",
+      "Peter Khumalo",
+      "Sasha Peters"
+    ],
+    "notes": "Reviewed critical faults, donor outreach, and upcoming communication approvals.",
+    "actionItems": [
+      {
+        "id": "action-1",
+        "title": "Follow up on Palm Crescent streetlight fault",
+        "status": "in-progress",
+        "ownerEmail": "naledi@communite.local"
+      },
+      {
+        "id": "action-2",
+        "title": "Prepare Freedom Day donor post",
+        "status": "todo",
+        "ownerEmail": "pro@communite.local"
+      }
+    ]
+  }
+]

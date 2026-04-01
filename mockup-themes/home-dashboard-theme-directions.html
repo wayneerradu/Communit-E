@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommUNIT-E Theme Directions</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Aptos, "Segoe UI", sans-serif;
+      background: #f3f5f2;
+      color: #122019;
+    }
+    .page {
+      width: min(1500px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+      display: grid;
+      gap: 22px;
+    }
+    .intro {
+      padding: 24px 26px;
+      background: white;
+      border: 1px solid rgba(18, 32, 25, 0.08);
+      border-radius: 28px;
+      box-shadow: 0 18px 40px rgba(18, 32, 25, 0.08);
+      display: grid;
+      gap: 10px;
+    }
+    h1, h2, h3, h4, p { margin: 0; }
+    .intro p, .meta, .item p { color: #637166; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .theme {
+      border-radius: 34px;
+      overflow: hidden;
+      box-shadow: 0 26px 60px rgba(18, 32, 25, 0.12);
+      min-height: 820px;
+      border: 1px solid rgba(255,255,255,0.35);
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+    .theme-head {
+      padding: 20px 22px;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(18, 32, 25, 0.08);
+      display: grid;
+      gap: 8px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(18, 32, 25, 0.06);
+      border: 1px solid rgba(18, 32, 25, 0.08);
+    }
+    .shell {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100%;
+    }
+    .sidebar {
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      color: white;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+    .nav {
+      display: grid;
+      gap: 7px;
+    }
+    .nav a {
+      text-decoration: none;
+      color: inherit;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+    .nav a.active {
+      background: rgba(255,255,255,0.1);
+      opacity: 1;
+    }
+    .profile {
+      margin-top: auto;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      gap: 4px;
+      font-size: 12px;
+    }
+    .content {
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 14px;
+    }
+    .actions { display: flex; gap: 8px; align-items: center; }
+    .btn, .status, .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid rgba(18, 32, 25, 0.08);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .stat, .card, .item {
+      border-radius: 22px;
+      padding: 14px;
+      border: 1px solid rgba(18, 32, 25, 0.08);
+    }
+    .stat { display: grid; gap: 6px; }
+    .stat strong { font-size: 28px; }
+    .split {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 12px;
+    }
+    .card { display: grid; gap: 10px; }
+    .list { display: grid; gap: 10px; }
+    .item { display: grid; gap: 6px; }
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+    }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .theme.civic {
+      background:
+        radial-gradient(circle at top left, rgba(214, 197, 160, 0.45), transparent 24%),
+        linear-gradient(180deg, #f3efe8 0%, #ece6dd 100%);
+    }
+    .theme.civic .sidebar { background: rgba(45, 44, 42, 0.96); }
+    .theme.civic .mark { background: linear-gradient(135deg, #d6c5a0, #b99d64); color: #2a2419; }
+    .theme.civic .content,
+    .theme.civic .theme-head { background: rgba(248, 244, 238, 0.72); }
+    .theme.civic .stat,
+    .theme.civic .card,
+    .theme.civic .item { background: rgba(255,255,255,0.78); }
+    .theme.civic .btn.primary { background: linear-gradient(135deg, #6e5638, #403121); color: white; }
+    .theme.civic .status.red { background: rgba(162, 79, 61, 0.15); color: #8c3223; }
+    .theme.civic .status.amber { background: rgba(173, 129, 57, 0.16); color: #8e6215; }
+    .theme.civic .status.green { background: rgba(73, 110, 83, 0.15); color: #335941; }
+
+    .theme.marine {
+      background:
+        radial-gradient(circle at top left, rgba(167, 226, 220, 0.45), transparent 24%),
+        linear-gradient(180deg, #eef7f6 0%, #e5f0f0 100%);
+    }
+    .theme.marine .sidebar { background: rgba(10, 49, 57, 0.96); }
+    .theme.marine .mark { background: linear-gradient(135deg, #a8e2da, #5fbcb0); color: #10353a; }
+    .theme.marine .content,
+    .theme.marine .theme-head { background: rgba(247, 252, 251, 0.72); }
+    .theme.marine .stat,
+    .theme.marine .card,
+    .theme.marine .item { background: rgba(255,255,255,0.8); }
+    .theme.marine .btn.primary { background: linear-gradient(135deg, #0f6671, #0a3a42); color: white; }
+    .theme.marine .status.red { background: rgba(194, 87, 74, 0.14); color: #98352a; }
+    .theme.marine .status.amber { background: rgba(220, 149, 59, 0.16); color: #8d5b0a; }
+    .theme.marine .status.green { background: rgba(47, 121, 103, 0.15); color: #1f5e4d; }
+
+    .theme.graphite {
+      background:
+        radial-gradient(circle at top left, rgba(221, 242, 132, 0.32), transparent 22%),
+        linear-gradient(180deg, #f0f2ee 0%, #e8ebe6 100%);
+    }
+    .theme.graphite .sidebar { background: rgba(28, 34, 31, 0.96); }
+    .theme.graphite .mark { background: linear-gradient(135deg, #ddf284, #a9d335); color: #203010; }
+    .theme.graphite .content,
+    .theme.graphite .theme-head { background: rgba(247, 249, 246, 0.72); }
+    .theme.graphite .stat,
+    .theme.graphite .card,
+    .theme.graphite .item { background: rgba(255,255,255,0.82); }
+    .theme.graphite .btn.primary { background: linear-gradient(135deg, #2d5f1c, #1f3d14); color: white; }
+    .theme.graphite .status.red { background: rgba(196, 87, 73, 0.14); color: #973429; }
+    .theme.graphite .status.amber { background: rgba(208, 152, 47, 0.16); color: #8d6113; }
+    .theme.graphite .status.green { background: rgba(76, 122, 56, 0.16); color: #365825; }
+
+    @media (max-width: 1280px) {
+      .grid, .shell, .stats, .split { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="intro">
+      <h1>CommUNIT-E Home Dashboard Theme Directions</h1>
+      <p>Three labeled visual directions for the same home dashboard. Each one keeps the same information architecture but changes the visual identity so you can choose the stronger direction for the product.</p>
+    </section>
+
+    <section class="grid">
+      <article class="theme civic">
+        <div class="theme-head">
+          <h2>Option A: Civic Stone</h2>
+          <p class="meta">Formal, grounded, and boardroom-ready. Warm stone tones with brass-like accents. Best if you want the platform to feel serious, institutional, and governance-first.</p>
+          <div class="chips">
+            <span class="chip">Formal</span>
+            <span class="chip">Warm neutral</span>
+            <span class="chip">Governance-heavy</span>
+          </div>
+        </div>
+        <div class="shell">
+          <aside class="sidebar">
+            <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>Operations</p></div></div>
+            <nav class="nav">
+              <a class="active">Home</a><a>Residents</a><a>Faults</a><a>Infrastructure</a><a>Projects</a><a>PRO</a><a>Super Admin</a>
+            </nav>
+            <div class="profile"><strong>Naledi Mokoena</strong><span>Super Admin</span><span>Active</span></div>
+          </aside>
+          <div class="content">
+            <div class="topbar">
+              <div><h3>Good morning, Naledi</h3><p class="meta">3 faults due, 12 residents pending, 1 vote closing soon.</p></div>
+              <div class="actions"><span class="btn">Search</span><span class="btn primary">Quick Action</span></div>
+            </div>
+            <div class="stats">
+              <div class="stat"><span class="meta">Pending Residents</span><strong>12</strong></div>
+              <div class="stat"><span class="meta">Faults Awaiting Response</span><strong>18</strong></div>
+              <div class="stat"><span class="meta">Projects Needing Help</span><strong>7</strong></div>
+              <div class="stat"><span class="meta">Open Resolutions</span><strong>2</strong></div>
+            </div>
+            <div class="split">
+              <div class="card">
+                <h4>Priority Work Queue</h4>
+                <div class="list">
+                  <div class="item"><div class="item-head"><div><strong>Water leak on Bellair Road</strong><p>Escalate+ due now</p></div><span class="status red">Due</span></div><div class="tag-row"><span class="tag">Ref# WT-22041</span><span class="tag">Assigned: Peter</span></div></div>
+                  <div class="item"><div class="item-head"><div><strong>Resident application pending</strong><p>WhatsApp confirmation missing</p></div><span class="status amber">Pending</span></div></div>
+                  <div class="item"><div class="item-head"><div><strong>School project task stuck</strong><p>No update in 6 days</p></div><span class="status amber">Needs Help</span></div></div>
+                </div>
+              </div>
+              <div class="card">
+                <h4>Today</h4>
+                <div class="item"><strong>11:00 Operations meeting</strong><p>Agenda loaded and calendar synced</p></div>
+                <div class="item"><strong>14:00 Fault follow-up window</strong><p>Three municipality responses to review</p></div>
+                <div class="item"><strong>Assistant Tip</strong><p>Approve the 2 residents ready for activation first.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="theme marine">
+        <div class="theme-head">
+          <h2>Option B: Clean Marine</h2>
+          <p class="meta">Refined, modern, and quietly technical. Teal and sea-glass tones make it feel more digital and operational, especially good for maps, infrastructure, and live dashboards.</p>
+          <div class="chips">
+            <span class="chip">Modern</span>
+            <span class="chip">Technical</span>
+            <span class="chip">Map-friendly</span>
+          </div>
+        </div>
+        <div class="shell">
+          <aside class="sidebar">
+            <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>Operations</p></div></div>
+            <nav class="nav">
+              <a class="active">Home</a><a>Residents</a><a>Faults</a><a>Infrastructure</a><a>Projects</a><a>PRO</a><a>Super Admin</a>
+            </nav>
+            <div class="profile"><strong>Naledi Mokoena</strong><span>Super Admin</span><span>Active</span></div>
+          </aside>
+          <div class="content">
+            <div class="topbar">
+              <div><h3>Good morning, Naledi</h3><p class="meta">3 faults due, 12 residents pending, 1 vote closing soon.</p></div>
+              <div class="actions"><span class="btn">Search</span><span class="btn primary">Quick Action</span></div>
+            </div>
+            <div class="stats">
+              <div class="stat"><span class="meta">Pending Residents</span><strong>12</strong></div>
+              <div class="stat"><span class="meta">Faults Awaiting Response</span><strong>18</strong></div>
+              <div class="stat"><span class="meta">Projects Needing Help</span><strong>7</strong></div>
+              <div class="stat"><span class="meta">Open Resolutions</span><strong>2</strong></div>
+            </div>
+            <div class="split">
+              <div class="card">
+                <h4>Priority Work Queue</h4>
+                <div class="list">
+                  <div class="item"><div class="item-head"><div><strong>Water leak on Bellair Road</strong><p>Escalate+ due now</p></div><span class="status red">Due</span></div><div class="tag-row"><span class="tag">Ref# WT-22041</span><span class="tag">Assigned: Peter</span></div></div>
+                  <div class="item"><div class="item-head"><div><strong>Resident application pending</strong><p>WhatsApp confirmation missing</p></div><span class="status amber">Pending</span></div></div>
+                  <div class="item"><div class="item-head"><div><strong>School project task stuck</strong><p>No update in 6 days</p></div><span class="status amber">Needs Help</span></div></div>
+                </div>
+              </div>
+              <div class="card">
+                <h4>Today</h4>
+                <div class="item"><strong>11:00 Operations meeting</strong><p>Agenda loaded and calendar synced</p></div>
+                <div class="item"><strong>14:00 Fault follow-up window</strong><p>Three municipality responses to review</p></div>
+                <div class="item"><strong>Assistant Tip</strong><p>Approve the 2 residents ready for activation first.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="theme graphite">
+        <div class="theme-head">
+          <h2>Option C: Graphite + Citrus</h2>
+          <p class="meta">Sharper, bolder, and more product-like. The graphite base with citrus accents feels the most modern and energetic while still staying readable in bright conditions.</p>
+          <div class="chips">
+            <span class="chip">Bold</span>
+            <span class="chip">Product-led</span>
+            <span class="chip">High contrast</span>
+          </div>
+        </div>
+        <div class="shell">
+          <aside class="sidebar">
+            <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>Operations</p></div></div>
+            <nav class="nav">
+              <a class="active">Home</a><a>Residents</a><a>Faults</a><a>Infrastructure</a><a>Projects</a><a>PRO</a><a>Super Admin</a>
+            </nav>
+            <div class="profile"><strong>Naledi Mokoena</strong><span>Super Admin</span><span>Active</span></div>
+          </aside>
+          <div class="content">
+            <div class="topbar">
+              <div><h3>Good morning, Naledi</h3><p class="meta">3 faults due, 12 residents pending, 1 vote closing soon.</p></div>
+              <div class="actions"><span class="btn">Search</span><span class="btn primary">Quick Action</span></div>
+            </div>
+            <div class="stats">
+              <div class="stat"><span class="meta">Pending Residents</span><strong>12</strong></div>
+              <div class="stat"><span class="meta">Faults Awaiting Response</span><strong>18</strong></div>
+              <div class="stat"><span class="meta">Projects Needing Help</span><strong>7</strong></div>
+              <div class="stat"><span class="meta">Open Resolutions</span><strong>2</strong></div>
+            </div>
+            <div class="split">
+              <div class="card">
+                <h4>Priority Work Queue</h4>
+                <div class="list">
+                  <div class="item"><div class="item-head"><div><strong>Water leak on Bellair Road</strong><p>Escalate+ due now</p></div><span class="status red">Due</span></div><div class="tag-row"><span class="tag">Ref# WT-22041</span><span class="tag">Assigned: Peter</span></div></div>
+                  <div class="item"><div class="item-head"><div><strong>Resident application pending</strong><p>WhatsApp confirmation missing</p></div><span class="status amber">Pending</span></div></div>
+                  <div class="item"><div class="item-head"><div><strong>School project task stuck</strong><p>No update in 6 days</p></div><span class="status amber">Needs Help</span></div></div>
+                </div>
+              </div>
+              <div class="card">
+                <h4>Today</h4>
+                <div class="item"><strong>11:00 Operations meeting</strong><p>Agenda loaded and calendar synced</p></div>
+                <div class="item"><strong>14:00 Fault follow-up window</strong><p>Three municipality responses to review</p></div>
+                <div class="item"><strong>Assistant Tip</strong><p>Approve the 2 residents ready for activation first.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>
+

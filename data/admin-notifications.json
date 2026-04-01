@@ -1,0 +1,38 @@
+[
+  {
+    "id": "mailbox-19d43b5cb6a9f520",
+    "title": "New Email: Delivery Status Notification (Failure)",
+    "detail": "From Mail Delivery Subsystem <mailer-daemon@googlemail.com> • Message blocked Your message to unityincommunityza@gmail.com has been blocked. See technical details below for more information. LEARN MORE The response was: 550 5.7.1 [209.85.220.41 12] Gmail has",
+    "channel": "in-app",
+    "audience": "admins",
+    "createdAt": "2026-03-31T23:43:12.417Z",
+    "importance": "informational",
+    "tone": "default",
+    "readBy": [],
+    "targetEmails": []
+  },
+  {
+    "id": "mailbox-19d43b5be7a884fd",
+    "title": "New Email: [Action needed] Complete your billing setup for the Gemini API",
+    "detail": "From Google AI Studio <googleaistudio-noreply@google.com> • Activate your account now ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏ ‍͏ ͏",
+    "channel": "in-app",
+    "audience": "admins",
+    "createdAt": "2026-03-31T23:43:12.417Z",
+    "importance": "informational",
+    "tone": "default",
+    "readBy": [],
+    "targetEmails": []
+  },
+  {
+    "id": "mailbox-19d25625741f3186",
+    "title": "New Email: \"Escalation to Councillor Samantha Ward 65|\"8033211, Woodlands Ave, Mount Vernon, Durban, 4094, South Africa, Electricity",
+    "detail": "From Mount VernonHillary Community Adminstrators <noreply@appsheet.com> • &quot;Escalation of Fault to Councillor&quot;8033211| Electricity|Woodlands Ave, Mount Vernon, Durban, 4094, South Africa Escalation Required: Dear Councillor Samantha Windvogel &amp; Ethekwini",
+    "channel": "in-app",
+    "audience": "admins",
+    "createdAt": "2026-03-31T23:43:12.417Z",
+    "importance": "informational",
+    "tone": "default",
+    "readBy": [],
+    "targetEmails": []
+  }
+]

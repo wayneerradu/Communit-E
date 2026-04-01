@@ -1,0 +1,457 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommUNIT-E Home Dashboard Mockup</title>
+  <style>
+    :root {
+      --bg: #eef3eb;
+      --panel: rgba(255, 255, 255, 0.82);
+      --panel-strong: #ffffff;
+      --text: #14241b;
+      --muted: #647466;
+      --line: rgba(20, 36, 27, 0.08);
+      --brand: #145842;
+      --brand-deep: #0a3528;
+      --accent: #d8f18a;
+      --warning: #d48e27;
+      --danger: #c4584a;
+      --success: #307d59;
+      --shadow: 0 26px 70px rgba(20, 36, 27, 0.12);
+      --radius-xl: 34px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-pill: 999px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Aptos, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(216, 241, 138, 0.65), transparent 24%),
+        radial-gradient(circle at top right, rgba(20, 88, 66, 0.16), transparent 28%),
+        linear-gradient(180deg, #f5f9f2 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: min(1440px, calc(100% - 32px));
+      margin: 18px auto;
+      min-height: calc(100vh - 36px);
+      background: rgba(255,255,255,0.28);
+      border: 1px solid rgba(255,255,255,0.55);
+      border-radius: 40px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      background: rgba(11, 39, 29, 0.96);
+      color: #eef8f0;
+      padding: 26px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(140deg, var(--accent), #86d391);
+      color: #102d20;
+      font-weight: 800;
+    }
+
+    .brand h1, .brand p, h2, h3, h4, p {
+      margin: 0;
+    }
+
+    .brand p, .profile span, .subtext, .item p, .meta {
+      color: var(--muted);
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-item {
+      padding: 13px 14px;
+      border-radius: 16px;
+      text-decoration: none;
+      color: inherit;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .nav-item.active {
+      background: rgba(216, 241, 138, 0.12);
+      border-color: rgba(216, 241, 138, 0.18);
+    }
+
+    .profile {
+      margin-top: auto;
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    .content {
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .topbar-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(140deg, #dcecd7, #b9d3af);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    .button, .chip, .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 15px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(20, 36, 27, 0.08);
+      background: rgba(255,255,255,0.78);
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+      color: #f7fff9;
+      border-color: transparent;
+    }
+
+    .status.red { background: rgba(196, 88, 74, 0.14); color: #97362b; }
+    .status.amber { background: rgba(212, 142, 39, 0.16); color: #915e12; }
+    .status.green { background: rgba(48, 125, 89, 0.14); color: #1f5f40; }
+    .status.blue { background: rgba(20, 88, 66, 0.12); color: #0f5640; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat, .card, .item, .tip {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 32px rgba(20, 36, 27, 0.07);
+    }
+
+    .stat, .card, .tip {
+      border-radius: var(--radius-lg);
+      padding: 18px;
+    }
+
+    .stat {
+      display: grid;
+      gap: 8px;
+    }
+
+    .stat strong {
+      font-size: 34px;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 16px;
+    }
+
+    .card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .item-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .item {
+      border-radius: 20px;
+      padding: 15px;
+      display: grid;
+      gap: 8px;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: rgba(20, 36, 27, 0.05);
+      padding: 8px 12px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .tip {
+      background: linear-gradient(145deg, rgba(255,255,255,0.88), rgba(243,250,237,0.88));
+      display: grid;
+      gap: 8px;
+    }
+
+    .today-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .today {
+      display: grid;
+      gap: 6px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(20, 36, 27, 0.04);
+      border: 1px solid rgba(20, 36, 27, 0.08);
+    }
+
+    @media (max-width: 1180px) {
+      .shell, .stats, .main-grid, .mini-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">CE</div>
+        <div>
+          <h1>CommUNIT-E</h1>
+          <p>Operations cockpit</p>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item active" href="#">Home</a>
+        <a class="nav-item" href="#">Residents</a>
+        <a class="nav-item" href="#">Faults</a>
+        <a class="nav-item" href="#">Infrastructure</a>
+        <a class="nav-item" href="#">Projects</a>
+        <a class="nav-item" href="#">Resolutions</a>
+        <a class="nav-item" href="#">Parking Lot</a>
+        <a class="nav-item" href="#">Meetings</a>
+        <a class="nav-item" href="#">PRO</a>
+        <a class="nav-item" href="#">Help</a>
+        <a class="nav-item" href="#">Super Admin</a>
+      </nav>
+
+      <div class="profile">
+        <strong>Naledi Mokoena</strong>
+        <span>Super Admin</span>
+        <span>Active</span>
+        <span>7 of 8 admins active today</span>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="topbar">
+        <div>
+          <h2>Good morning, Naledi</h2>
+          <p class="subtext">There are 3 faults due for action today, 12 residents pending review, and 1 resolution closing in 6 hours.</p>
+        </div>
+        <div class="topbar-right">
+          <span class="button">Global Search</span>
+          <span class="button primary">Quick Action</span>
+          <div class="avatar">NM</div>
+        </div>
+      </div>
+
+      <section class="stats">
+        <div class="stat">
+          <span class="meta">Pending Residents</span>
+          <strong>12</strong>
+          <span class="meta">4 need WhatsApp confirmation</span>
+        </div>
+        <div class="stat">
+          <span class="meta">Faults Awaiting Response</span>
+          <strong>18</strong>
+          <span class="meta">6 due for nudge or escalation</span>
+        </div>
+        <div class="stat">
+          <span class="meta">Projects Needing Help</span>
+          <strong>7</strong>
+          <span class="meta">3 tasks stuck over 5 days</span>
+        </div>
+        <div class="stat">
+          <span class="meta">Open Resolutions</span>
+          <strong>2</strong>
+          <span class="meta">1 requires 1 more yes vote</span>
+        </div>
+      </section>
+
+      <section class="main-grid">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Priority Work Queue</h3>
+              <p class="subtext">One cross-platform queue showing the next best actions, not just raw module lists.</p>
+            </div>
+            <span class="button">View All</span>
+          </div>
+
+          <div class="item-list">
+            <article class="item">
+              <div class="item-head">
+                <div>
+                  <h4>Water leak on Bellair Road needs Escalate+</h4>
+                  <p>Open for 5 days Â· Water Department Â· Bellair Road</p>
+                </div>
+                <span class="status red">Due Now</span>
+              </div>
+              <div class="tags">
+                <span class="chip">Ref# WT-22041</span>
+                <span class="chip">Assigned: Peter</span>
+                <span class="chip">Resident linked</span>
+              </div>
+            </article>
+
+            <article class="item">
+              <div class="item-head">
+                <div>
+                  <h4>Resident application needs final approval</h4>
+                  <p>Bluegum Road Â· Address and mobile verified Â· waiting for WhatsApp add confirmation</p>
+                </div>
+                <span class="status amber">Pending</span>
+              </div>
+              <div class="tags">
+                <span class="chip">Geofence passed</span>
+                <span class="chip">Growth opportunity</span>
+              </div>
+            </article>
+
+            <article class="item">
+              <div class="item-head">
+                <div>
+                  <h4>Bellair Primary School crossing-light task is stuck</h4>
+                  <p>No update in 6 days Â· blocked by supplier response</p>
+                </div>
+                <span class="status amber">Needs Help</span>
+              </div>
+              <div class="tags">
+                <span class="chip">Owner: Sasha</span>
+                <span class="chip">Project: School Safety</span>
+              </div>
+            </article>
+
+            <article class="item">
+              <div class="item-head">
+                <div>
+                  <h4>Media statement ready for secretary sign-off</h4>
+                  <p>Road safety campaign Â· PDF draft prepared</p>
+                </div>
+                <span class="status blue">Awaiting Sign-off</span>
+              </div>
+              <div class="tags">
+                <span class="chip">PRO</span>
+                <span class="chip">Telegram on publish</span>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Today</h3>
+              <p class="subtext">A compact panel for urgent time-based work and useful guidance.</p>
+            </div>
+          </div>
+
+          <div class="today-list">
+            <div class="today">
+              <strong>11:00 Operations Meeting</strong>
+              <p>Agenda loaded, transcript capture enabled, secretary sign-off expected same day.</p>
+            </div>
+            <div class="today">
+              <strong>14:00 Fault Follow-up Window</strong>
+              <p>Three municipality responses need review before automatic escalation proceeds.</p>
+            </div>
+            <div class="today">
+              <strong>16:30 Resident Outreach</strong>
+              <p>Bluegum Road campaign prepared for active residents not yet in WhatsApp.</p>
+            </div>
+          </div>
+
+          <div class="tip">
+            <h4>Assistant Tip</h4>
+            <p>Start with the resident queue. Two applications look ready for activation once WhatsApp membership is confirmed.</p>
+          </div>
+
+          <div class="tip">
+            <h4>System Banner</h4>
+            <p>Telegram connector is still awaiting chat ID configuration. Critical alerts are falling back to in-app only.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
+

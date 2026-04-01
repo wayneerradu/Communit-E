@@ -1,0 +1,133 @@
+{
+  "googleWorkspace": {
+    "workspaceDomain": "unityincommunity.org.za",
+    "clientId": "985831312071-obule1ie8g026kiundv34nrpc7b6jp0i.apps.googleusercontent.com",
+    "allowedDomains": [
+      "unityincommunity.org.za"
+    ],
+    "callbackUrl": "http://localhost:3010/api/auth/google/callback",
+    "googleMapsApiKey": "",
+    "residentsMapDefaultCenter": {
+      "label": "Woodlands Avenue, Mount Vernon, Durban 4094",
+      "latitude": -29.893236,
+      "longitude": 30.9430801,
+      "zoom": 16
+    },
+    "status": "pending",
+    "clientSecretConfigured": false
+  },
+  "googleCalendar": {
+    "enabled": false,
+    "syncMode": "read-only",
+    "calendarName": "Our Shared Calendar",
+    "calendarId": "c_7d456e5df98e55d048beeb4ef9fd094fd4f3871432ec94abd857a7eb5b3e6a2c@group.calendar.google.com",
+    "connectedAccount": "hello@unityincommunity.org.za",
+    "connectionStatus": "pending",
+    "grantedScopes": [
+      "https://www.googleapis.com/auth/calendar.events"
+    ],
+    "lastSyncedAt": "",
+    "refreshTokenConfigured": false
+  },
+  "publicJoinProtection": {
+    "turnstileEnabled": false,
+    "turnstileSiteKey": "",
+    "turnstileSecretConfigured": false,
+    "minimumCompletionSeconds": 3
+  },
+  "triageMailbox": {
+    "address": "hello@unityincommunity.org.za",
+    "mode": "collaborative-inbox",
+    "senderName": "Unity In Community Support",
+    "inboundSync": "connected",
+    "primaryChannel": true
+  },
+  "telegram": {
+    "botName": "CommunitE Ops Bot",
+    "groupName": "Unity In Community Ops",
+    "botTokenConfigured": false,
+    "chatIdConfigured": false,
+    "status": "pending"
+  },
+  "maintenance": {
+    "modeEnabled": false,
+    "bannerMessage": "CommUNIT-E is currently undergoing maintenance. Please check back shortly.",
+    "allowSuperAdminAccessOnly": true,
+    "lastUpdatedAt": "2026-03-26T18:05:00Z"
+  },
+  "notificationPolicy": {
+    "quietHoursStart": "20:00",
+    "quietHoursEnd": "08:00",
+    "quietDays": [
+      "SAT",
+      "SUN"
+    ],
+    "telegramCriticalOnly": false
+  },
+  "communicationSettings": {
+    "email": {
+      "mode": "live",
+      "liveRecipients": [],
+      "demoRecipients": []
+    },
+    "telegram": {
+      "mode": "live",
+      "liveGroupName": "Unity In Community Ops",
+      "liveChatId": "",
+      "demoGroupName": "Unity In Community Demo Ops",
+      "demoChatId": "",
+      "demoBotToken": ""
+    },
+    "councillor": {
+      "name": "",
+      "email": "",
+      "cellNumber": ""
+    }
+  },
+  "communicationTemplates": {
+    "faultInitialEscalation": {
+      "enabled": true,
+      "subjectTemplate": "Fault Escalation: {faultRef} - {title}",
+      "bodyTemplate": "Good day,\n\nA fault has been escalated.\n\nFault Ref: {faultRef}\nTitle: {title}\nCategory: {category}\nSub Category: {subCategory}\nPriority: {priority}\nLocation: {location}\nReported By: {reportedBy}\n\nPlease acknowledge and action urgently.\n\nDo not remove the tracking token in this email thread.",
+      "signature": "Regards,\n{officeBearerName}\nOffice Bearer, Unity In Community\n{officeBearerEmail}"
+    },
+    "faultEscalatePlus": {
+      "enabled": true,
+      "subjectTemplate": "Escalate+ Reminder: {faultRef} - {title}",
+      "bodyTemplate": "Good day,\n\nThis fault has reached Escalate+.\n\nFault Ref: {faultRef}\nTitle: {title}\nCategory: {category}\nSub Category: {subCategory}\nPriority: {priority}\nLocation: {location}\nDays Open: {daysOpen}\n\nPlease prioritize this matter.",
+      "signature": "Regards,\n{officeBearerName}\nOffice Bearer, Unity In Community\n{officeBearerEmail}"
+    },
+    "faultEscalatePlusPlus": {
+      "enabled": true,
+      "subjectTemplate": "Escalate++ Management Attention: {faultRef} - {title}",
+      "bodyTemplate": "Good day,\n\nThis fault has reached Escalate++ and requires management attention.\n\nFault Ref: {faultRef}\nTitle: {title}\nCategory: {category}\nSub Category: {subCategory}\nPriority: {priority}\nLocation: {location}\nDays Open: {daysOpen}\n\nPlease advise immediate intervention.",
+      "signature": "Regards,\n{officeBearerName}\nOffice Bearer, Unity In Community\n{officeBearerEmail}"
+    },
+    "faultReopened": {
+      "enabled": true,
+      "subjectTemplate": "Fault Reopened: {faultRef} - {title}",
+      "bodyTemplate": "Good day,\n\nA previously closed fault has been reopened.\n\nFault Ref: {faultRef}\nTitle: {title}\nCategory: {category}\nSub Category: {subCategory}\nPriority: {priority}\nLocation: {location}\nReopen Reason: {reopenReason}\n\nPlease treat this as active and provide updated feedback.",
+      "signature": "Regards,\n{officeBearerName}\nOffice Bearer, Unity In Community\n{officeBearerEmail}"
+    }
+  },
+  "sessionPolicy": {
+    "idleTimeoutMinutes": 30,
+    "absoluteSessionHours": 12,
+    "warnBeforeExpiryMinutes": 5,
+    "allowMultipleSessions": true
+  },
+  "branding": {
+    "platformFont": "Aptos",
+    "logoMode": "default",
+    "emailTheme": "CommUNIT-E Standard",
+    "platformSubtitle": "Community Operations Orchestrator",
+    "organisationName": "Mount Vernon Residents Association",
+    "logoImage": ""
+  },
+  "faultEscalation": {
+    "initialContacts": [],
+    "escalatePlusBySubCategory": {},
+    "escalatePlusPlusBySubCategory": {}
+  },
+  "updatedAt": "2026-04-01T00:23:56.601Z"
+}

@@ -1,0 +1,25 @@
+[
+  {
+    "id": "svc-web",
+    "name": "Web App",
+    "status": "healthy",
+    "host": "windows-self-hosted",
+    "lastRestartAt": "2026-03-26T16:30:00Z",
+    "description": "Next.js application container serving the internal admin platform."
+  },
+  {
+    "id": "svc-db",
+    "name": "PostgreSQL",
+    "status": "healthy",
+    "host": "docker-postgres",
+    "lastRestartAt": "2026-03-26T16:28:00Z",
+    "description": "Primary relational database for platform records and audit data."
+  },
+  {
+    "id": "svc-mail-sync",
+    "name": "Mailbox Sync",
+    "status": "warning",
+    "host": "planned-service",
+    "description": "Future inbound sync service for the collaborative inbox and thread ingestion."
+  }
+]

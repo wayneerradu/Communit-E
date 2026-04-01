@@ -1,0 +1,782 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommUNIT-E Residents Hub - Clean Marine</title>
+  <style>
+    :root {
+      --bg: #e8f1f1;
+      --bg-soft: #f4f9f8;
+      --panel: rgba(255, 255, 255, 0.82);
+      --panel-strong: rgba(255, 255, 255, 0.94);
+      --text: #123038;
+      --muted: #62777d;
+      --line: rgba(18, 48, 56, 0.09);
+      --brand: #116772;
+      --brand-deep: #0a3b43;
+      --accent: #a7e2da;
+      --accent-strong: #5ebcaf;
+      --success: #2f7967;
+      --warning: #cf8b37;
+      --danger: #bf5a49;
+      --shadow: 0 28px 70px rgba(13, 45, 53, 0.12);
+      --radius-xl: 34px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-pill: 999px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Aptos, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(167, 226, 220, 0.55), transparent 24%),
+        radial-gradient(circle at top right, rgba(17, 103, 114, 0.16), transparent 28%),
+        linear-gradient(180deg, #f4f9f8 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4, p { margin: 0; }
+
+    .page {
+      width: min(1520px, calc(100% - 32px));
+      margin: 18px auto;
+      min-height: calc(100vh - 36px);
+      background: rgba(255, 255, 255, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.58);
+      border-radius: 40px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 272px 1fr;
+    }
+
+    .sidebar {
+      background: rgba(9, 50, 58, 0.96);
+      color: #eff9f8;
+      padding: 26px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(140deg, var(--accent), var(--accent-strong));
+      color: #10353a;
+      font-weight: 800;
+    }
+
+    .brand p,
+    .profile span,
+    .nav-subtitle,
+    .tiny {
+      color: rgba(239, 249, 248, 0.72);
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-item {
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1px solid transparent;
+      font-weight: 700;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .nav-item.active {
+      background: rgba(167, 226, 220, 0.12);
+      border-color: rgba(167, 226, 220, 0.18);
+    }
+
+    .profile {
+      margin-top: auto;
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: grid;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    .main {
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 18px;
+    }
+
+    .topbar p,
+    .subtext,
+    .meta,
+    .resident-card p,
+    .map-card p,
+    .timeline-item p {
+      color: var(--muted);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .button,
+    .chip,
+    .badge,
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 15px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(18, 48, 56, 0.08);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .button.primary {
+      color: white;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+    }
+
+    .button.search {
+      min-width: 210px;
+      justify-content: flex-start;
+      color: var(--muted);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat-card,
+    .panel,
+    .resident-card,
+    .map-card,
+    .timeline-item {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: 0 16px 32px rgba(13, 45, 53, 0.08);
+    }
+
+    .stat-card,
+    .panel,
+    .map-card {
+      border-radius: var(--radius-lg);
+      padding: 18px;
+    }
+
+    .stat-card {
+      display: grid;
+      gap: 8px;
+    }
+
+    .stat-card strong {
+      font-size: 34px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
+      gap: 16px;
+    }
+
+    .panel {
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .panel-head-right {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .resident-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .resident-card {
+      padding: 16px;
+      border-radius: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .resident-head,
+    .timeline-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .resident-id {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(140deg, #d7f0ec, #9fd8cf);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: #133941;
+      flex-shrink: 0;
+    }
+
+    .tag-row,
+    .checklist,
+    .segment-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: rgba(17, 103, 114, 0.08);
+      color: #0f5560;
+    }
+
+    .status.pending {
+      background: rgba(207, 139, 55, 0.15);
+      color: #8a5a16;
+    }
+
+    .status.ready {
+      background: rgba(47, 121, 103, 0.14);
+      color: #1f6050;
+    }
+
+    .status.blocked {
+      background: rgba(191, 90, 73, 0.15);
+      color: #973c2b;
+    }
+
+    .map-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .map-surface {
+      min-height: 280px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(18, 48, 56, 0.08);
+      background:
+        linear-gradient(180deg, rgba(223, 244, 241, 0.96), rgba(206, 233, 231, 0.92)),
+        repeating-linear-gradient(
+          90deg,
+          rgba(17, 103, 114, 0.03),
+          rgba(17, 103, 114, 0.03) 18px,
+          rgba(17, 103, 114, 0.01) 18px,
+          rgba(17, 103, 114, 0.01) 36px
+        );
+      position: relative;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .road-line {
+      position: absolute;
+      left: 14%;
+      right: 12%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(18, 48, 56, 0.22);
+      box-shadow: 0 0 0 14px rgba(255, 255, 255, 0.28);
+    }
+
+    .road-line.one { top: 30%; transform: rotate(-6deg); }
+    .road-line.two { top: 56%; transform: rotate(2deg); }
+
+    .pin {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      box-shadow: 0 8px 20px rgba(17, 103, 114, 0.18);
+    }
+
+    .pin::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      position: absolute;
+      top: 5px;
+      left: 5px;
+    }
+
+    .pin.group { background: #2f7967; }
+    .pin.growth { background: #cf8b37; }
+    .pin.pending { background: #bf5a49; }
+
+    .pin.a { top: 28%; left: 32%; }
+    .pin.b { top: 39%; left: 47%; }
+    .pin.c { top: 54%; left: 26%; }
+    .pin.d { top: 62%; left: 58%; }
+    .pin.e { top: 46%; left: 69%; }
+
+    .segment-card {
+      padding: 16px;
+      border-radius: 20px;
+      background: var(--panel-strong);
+      border: 1px solid rgba(18, 48, 56, 0.09);
+      display: grid;
+      gap: 12px;
+    }
+
+    .message-box {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(17, 103, 114, 0.06);
+      border: 1px solid rgba(17, 103, 114, 0.08);
+      color: #19454f;
+      line-height: 1.5;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .summary-banner {
+      padding: 18px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(167, 226, 220, 0.42), rgba(255, 255, 255, 0.72));
+      border: 1px solid rgba(18, 48, 56, 0.08);
+      display: grid;
+      gap: 12px;
+    }
+
+    .field-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: var(--panel-strong);
+      border: 1px solid rgba(18, 48, 56, 0.08);
+      display: grid;
+      gap: 4px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .check-item {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(47, 121, 103, 0.08);
+      border: 1px solid rgba(47, 121, 103, 0.1);
+      color: #205d4e;
+      font-weight: 700;
+    }
+
+    .check-item.pending {
+      background: rgba(207, 139, 55, 0.1);
+      border-color: rgba(207, 139, 55, 0.12);
+      color: #8c6114;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline-item {
+      padding: 14px 16px;
+      border-radius: 18px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .helper {
+      padding: 16px 18px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(17, 103, 114, 0.1), rgba(167, 226, 220, 0.28));
+      border: 1px solid rgba(17, 103, 114, 0.09);
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .helper strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 1280px) {
+      .layout,
+      .detail-grid,
+      .field-grid,
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">CE</div>
+        <div>
+          <h1>CommUNIT-E</h1>
+          <p>Clean Marine direction</p>
+        </div>
+      </div>
+
+      <div class="nav-subtitle">Core hubs</div>
+      <nav class="nav">
+        <a class="nav-item" href="#">Home</a>
+        <a class="nav-item active" href="#">Residents</a>
+        <a class="nav-item" href="#">Faults</a>
+        <a class="nav-item" href="#">Infrastructure</a>
+        <a class="nav-item" href="#">Projects</a>
+        <a class="nav-item" href="#">Meetings</a>
+        <a class="nav-item" href="#">Resolutions</a>
+        <a class="nav-item" href="#">PRO</a>
+        <a class="nav-item" href="#">Super Admin</a>
+      </nav>
+
+      <div class="profile">
+        <strong>Naledi Mokoena</strong>
+        <span>Super Admin</span>
+        <span>Active</span>
+        <span>12 residents need action today</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="topbar">
+        <div>
+          <h2>Residents Hub</h2>
+          <p>Pending reviews, active member records, WhatsApp growth targeting, and map-led outreach in one operational view.</p>
+        </div>
+
+        <div class="toolbar">
+          <span class="button search">Search name, road, mobile, email...</span>
+          <span class="button">Open Map</span>
+          <span class="button">Import CSV</span>
+          <span class="button primary">Add Resident</span>
+        </div>
+      </section>
+
+      <section class="stat-grid">
+        <article class="stat-card">
+          <span class="meta">Pending</span>
+          <strong>12</strong>
+          <span class="badge">4 ready to approve</span>
+        </article>
+        <article class="stat-card">
+          <span class="meta">Active</span>
+          <strong>428</strong>
+          <span class="badge">31 on Palm Crescent</span>
+        </article>
+        <article class="stat-card">
+          <span class="meta">Not In WhatsApp</span>
+          <strong>19</strong>
+          <span class="badge">High growth target</span>
+        </article>
+        <article class="stat-card">
+          <span class="meta">Leavers</span>
+          <strong>14</strong>
+          <span class="badge">3 rejoin requests</span>
+        </article>
+        <article class="stat-card">
+          <span class="meta">Needs Mapping</span>
+          <strong>9</strong>
+          <span class="badge">2 from today's import</span>
+        </article>
+      </section>
+
+      <section class="layout">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Pending Queue</h3>
+              <p class="subtext">The highest-value work is surfaced first, with clear blockers and minimal clicks.</p>
+            </div>
+            <div class="panel-head-right">
+              <span class="chip">Pending</span>
+              <span class="chip">Rejected</span>
+              <span class="chip">Leavers</span>
+            </div>
+          </div>
+
+          <div class="resident-list">
+            <article class="resident-card">
+              <div class="resident-head">
+                <div class="resident-id">
+                  <div class="avatar">SN</div>
+                  <div>
+                    <h4>Sibongile Ndlovu</h4>
+                    <p>12 Palm Crescent, Mount Vernon</p>
+                  </div>
+                </div>
+                <span class="status ready">Ready To Approve</span>
+              </div>
+              <div class="tag-row">
+                <span class="chip">Road: Palm Crescent</span>
+                <span class="chip">Security: Blue Security</span>
+                <span class="chip">WhatsApp: Not Added</span>
+                <span class="chip">Maps Link Ready</span>
+              </div>
+              <div class="checklist">
+                <span class="check-item">Address Verified</span>
+                <span class="check-item">Mobile Verified</span>
+                <span class="check-item pending">Confirm WhatsApp Added</span>
+                <span class="check-item">POPIA Consent Accepted</span>
+              </div>
+              <div class="toolbar">
+                <span class="button">Open Profile</span>
+                <span class="button">Open Google Maps</span>
+                <span class="button primary">Approve</span>
+              </div>
+            </article>
+
+            <article class="resident-card">
+              <div class="resident-head">
+                <div class="resident-id">
+                  <div class="avatar">TM</div>
+                  <div>
+                    <h4>Thabiso Mthembu</h4>
+                    <p>Outside Mount Vernon geofence</p>
+                  </div>
+                </div>
+                <span class="status blocked">Auto Rejected</span>
+              </div>
+              <div class="tag-row">
+                <span class="chip">Reason: Outside Area</span>
+                <span class="chip">Decline Email Ready</span>
+                <span class="chip">Audit Recorded</span>
+              </div>
+              <p>The system detected an address outside Mount Vernon, Durban, 4094. The branded decline email is prepared and the record is held in Rejected for review.</p>
+              <div class="toolbar">
+                <span class="button">Review</span>
+                <span class="button">Preview Email</span>
+                <span class="button primary">Send Decline</span>
+              </div>
+            </article>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Map And Outreach</h3>
+              <p class="subtext">Road-based targeting stays visible, readable, and easy for non-technical admins to use.</p>
+            </div>
+            <div class="panel-head-right">
+              <span class="chip">Road Filter</span>
+              <span class="chip">WhatsApp State</span>
+            </div>
+          </div>
+
+          <div class="map-card">
+            <div class="map-surface">
+              <div class="road-line one"></div>
+              <div class="road-line two"></div>
+              <div class="pin group a"></div>
+              <div class="pin growth b"></div>
+              <div class="pin pending c"></div>
+              <div class="pin group d"></div>
+              <div class="pin growth e"></div>
+              <div>
+                <h4>Bluegum Road Growth Opportunity</h4>
+                <p>5 active residents are not yet in the WhatsApp group. 2 need mapping confirmation.</p>
+              </div>
+            </div>
+
+            <div class="segment-filters">
+              <span class="badge">In Group</span>
+              <span class="badge">Not In Group</span>
+              <span class="badge">Pending</span>
+              <span class="badge">Needs Mapping</span>
+            </div>
+
+            <div class="segment-card">
+              <div class="panel-head">
+                <div>
+                  <h4>Selected Segment</h4>
+                  <p class="subtext">Bluegum Road, Palm Crescent, and Ridge Avenue</p>
+                </div>
+                <span class="status pending">18 Selected</span>
+              </div>
+              <div class="message-box">
+                Good day neighbour. We noticed that your residence is active in CommUNIT-E records but not yet linked to the community WhatsApp group. If you would like to join, please reply and we will assist with the next step.
+              </div>
+              <div class="toolbar">
+                <span class="button">Preview Email</span>
+                <span class="button">Generate WhatsApp Outreach</span>
+                <span class="button primary">Create Campaign</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="detail-grid">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Resident Profile Preview</h3>
+              <p class="subtext">The profile stays structured, simple, and governance-led rather than becoming one long form.</p>
+            </div>
+            <div class="panel-head-right">
+              <span class="button">Open Full Record</span>
+              <span class="button primary">Approve Active</span>
+            </div>
+          </div>
+
+          <div class="summary-banner">
+            <div class="tag-row">
+              <span class="badge">Pending</span>
+              <span class="badge">Road: Palm Crescent</span>
+              <span class="badge">Geofence Passed</span>
+              <span class="badge">WhatsApp Not Added</span>
+            </div>
+            <div>
+              <h4>Sibongile Ndlovu</h4>
+              <p>Application received 24 March 2026. Mobile confirmed in WhatsApp format. One final group-add confirmation is still required.</p>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label>Mobile Number</label>
+              <strong>+27 82 555 0147</strong>
+            </div>
+            <div class="field">
+              <label>Email Address</label>
+              <strong>sibongile@example.com</strong>
+            </div>
+            <div class="field">
+              <label>Security Company</label>
+              <strong>Blue Security</strong>
+            </div>
+            <div class="field">
+              <label>Google Maps</label>
+              <strong>Open 12 Palm Crescent</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>History And Governance</h3>
+              <p class="subtext">Everything important is readable at a glance, with enough detail for later audit or handover.</p>
+            </div>
+            <span class="chip">Audit Trail</span>
+          </div>
+
+          <div class="timeline">
+            <article class="timeline-item">
+              <div class="timeline-head">
+                <strong>Application submitted</strong>
+                <span class="tiny">24 Mar, 09:14</span>
+              </div>
+              <p>Consent accepted, geofence passed, and duplicate check returned no exact matches.</p>
+            </article>
+            <article class="timeline-item">
+              <div class="timeline-head">
+                <strong>Mobile number verified</strong>
+                <span class="tiny">24 Mar, 10:02</span>
+              </div>
+              <p>Admin matched the submitted mobile to WhatsApp format and confirmed the number is valid for group onboarding.</p>
+            </article>
+            <article class="timeline-item">
+              <div class="timeline-head">
+                <strong>Reminder triggered</strong>
+                <span class="tiny">Today, 08:00</span>
+              </div>
+              <p>In-app prompt sent to confirm WhatsApp group addition before activation can proceed.</p>
+            </article>
+          </div>
+        </article>
+      </section>
+
+      <section class="helper">
+        <div>
+          <strong>Assistant Tip</strong>
+          Finish the four residents marked ready first, then use the Bluegum Road outreach segment to grow the WhatsApp group without leaving the hub.
+        </div>
+        <span class="button">Open Self Help</span>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
+

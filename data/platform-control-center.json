@@ -1,0 +1,188 @@
+{
+  "accessSummary": {
+    "totalAdmins": 8,
+    "totalSuperAdmins": 2,
+    "inactiveAdmins": 1,
+    "lastAccessReviewAt": "2026-03-20T08:30:00Z"
+  },
+  "connectors": [
+    {
+      "id": "con-google",
+      "name": "Google Workspace",
+      "status": "connected",
+      "lastSyncAt": "2026-03-26T17:58:00Z",
+      "authType": "OAuth"
+    },
+    {
+      "id": "con-wordpress",
+      "name": "WordPress Website",
+      "status": "warning",
+      "lastSyncAt": "2026-03-25T10:15:00Z",
+      "lastError": "Application password rotation due soon",
+      "authType": "Application Password"
+    },
+    {
+      "id": "con-telegram",
+      "name": "Telegram Bot",
+      "status": "disconnected",
+      "lastError": "Chat ID has not been configured yet",
+      "authType": "Bot Token"
+    }
+  ],
+  "automationJobs": [
+    {
+      "id": "job-fault-escalation",
+      "name": "Fault SLA Escalations",
+      "cadence": "Every 15 minutes",
+      "status": "healthy",
+      "lastRunAt": "2026-03-26T18:00:00Z",
+      "nextRunAt": "2026-03-26T18:15:00Z"
+    },
+    {
+      "id": "job-mailbox-sync",
+      "name": "Collaborative Inbox Sync",
+      "cadence": "Every 5 minutes",
+      "status": "warning",
+      "lastRunAt": "2026-03-26T17:55:00Z",
+      "nextRunAt": "2026-03-26T18:00:00Z"
+    },
+    {
+      "id": "job-resident-archive",
+      "name": "Resident Archive Sweep",
+      "cadence": "Daily at 02:00",
+      "status": "paused",
+      "lastRunAt": "2026-03-25T02:00:00Z",
+      "nextRunAt": "2026-03-27T02:00:00Z"
+    }
+  ],
+  "failures": [
+    {
+      "id": "fail-1",
+      "title": "Mailbox reply match needs review",
+      "area": "Faults",
+      "severity": "warning",
+      "occurredAt": "2026-03-26T16:40:00Z",
+      "detail": "One inbound email could not be matched confidently to a fault reference."
+    },
+    {
+      "id": "fail-2",
+      "title": "Telegram delivery skipped",
+      "area": "Notifications",
+      "severity": "danger",
+      "occurredAt": "2026-03-26T14:05:00Z",
+      "detail": "Critical alert queued while Telegram connector is not configured."
+    }
+  ],
+  "qualityMetrics": [
+    {
+      "id": "qm-1",
+      "label": "Residents needing mapping",
+      "value": "14",
+      "detail": "Addresses need geocoding or manual pin correction."
+    },
+    {
+      "id": "qm-2",
+      "label": "Assets missing official refs",
+      "value": "29",
+      "detail": "Internal IDs exist but municipal references are still unknown."
+    },
+    {
+      "id": "qm-3",
+      "label": "Faults missing photos",
+      "value": "11",
+      "detail": "Open faults without supporting media."
+    }
+  ],
+  "usageMetrics": [
+    {
+      "id": "um-1",
+      "label": "Daily active admins",
+      "value": "7/8",
+      "trend": "Stable over the last 7 days"
+    },
+    {
+      "id": "um-2",
+      "label": "Assistant requests",
+      "value": "43",
+      "trend": "Most requests come from Faults and Residents"
+    },
+    {
+      "id": "um-3",
+      "label": "Exports this month",
+      "value": "18",
+      "trend": "Resident exports remain the highest usage"
+    }
+  ],
+  "templates": [
+    {
+      "id": "tpl-1",
+      "name": "Fault First Escalation",
+      "area": "Faults",
+      "status": "active",
+      "lastUpdatedAt": "2026-03-19T09:20:00Z"
+    },
+    {
+      "id": "tpl-2",
+      "name": "Resident Out-of-Area Decline",
+      "area": "Residents",
+      "status": "active",
+      "lastUpdatedAt": "2026-03-18T13:10:00Z"
+    },
+    {
+      "id": "tpl-3",
+      "name": "Media Statement PDF",
+      "area": "PRO",
+      "status": "draft",
+      "lastUpdatedAt": "2026-03-24T08:00:00Z"
+    }
+  ],
+  "publicSurfaces": [
+    {
+      "id": "pub-1",
+      "name": "Resident Application Form",
+      "visibility": "live",
+      "description": "Public intake form for new resident applications."
+    },
+    {
+      "id": "pub-2",
+      "name": "Public Fault Dashboard",
+      "visibility": "live",
+      "description": "Public-safe dashboard for fault transparency and status checks."
+    }
+  ],
+  "activeSessions": [
+    {
+      "id": "sess-1",
+      "userEmail": "naledi@unityincommunity.org.za",
+      "userName": "Naledi Mokoena",
+      "role": "SUPER_ADMIN",
+      "createdAt": "2026-03-26T16:00:00Z",
+      "lastActivityAt": "2026-03-26T18:22:00Z",
+      "expiresAt": "2026-03-27T04:00:00Z",
+      "status": "active",
+      "userAgent": "Windows Desktop"
+    },
+    {
+      "id": "sess-2",
+      "userEmail": "peter@unityincommunity.org.za",
+      "userName": "Peter Khumalo",
+      "role": "ADMIN",
+      "createdAt": "2026-03-26T14:30:00Z",
+      "lastActivityAt": "2026-03-26T15:10:00Z",
+      "expiresAt": "2026-03-27T02:30:00Z",
+      "status": "idle",
+      "userAgent": "Android Mobile"
+    },
+    {
+      "id": "891cd7c7-cc26-4822-ac77-11a00ff8d72a",
+      "userEmail": "superadmin@unityincommunity.org.za",
+      "userName": "Local Super Admin",
+      "role": "SUPER_ADMIN",
+      "createdAt": "2026-04-01T00:20:24.641Z",
+      "lastActivityAt": "2026-04-01T00:23:55.539Z",
+      "expiresAt": "2026-04-01T12:23:55.539Z",
+      "status": "active",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0"
+    }
+  ]
+}

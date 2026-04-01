@@ -1,0 +1,20 @@
+[
+  {
+    "id": "res-1",
+    "name": "Wayne Erradu",
+    "standNo": "Not captured",
+    "residentType": "admin",
+    "email": "wayne.erradu@gmail.com",
+    "phone": "+27837935173",
+    "securityCompany": "Blue Security",
+    "status": "active",
+    "addressLine1": "158 Woodlands Ave, Mount Vernon, Durban, 4094, South Africa",
+    "latitude": -29.895639,
+    "longitude": 30.9424651,
+    "addressVerified": true,
+    "mobileVerified": true,
+    "whatsappAdded": false,
+    "consentAccepted": true,
+    "submittedViaPublicForm": false
+  }
+]

@@ -1,0 +1,59 @@
+{
+  "year": 2026,
+  "lastSyncedAt": "2026-03-28T20:08:49.660Z",
+  "source": "openholidays",
+  "items": [
+    {
+      "date": "2026-01-01",
+      "holidayName": "New Year’s Day"
+    },
+    {
+      "date": "2026-03-21",
+      "holidayName": "Human Rights Day"
+    },
+    {
+      "date": "2026-04-03",
+      "holidayName": "Good Friday"
+    },
+    {
+      "date": "2026-04-06",
+      "holidayName": "Family Day"
+    },
+    {
+      "date": "2026-04-27",
+      "holidayName": "Freedom Day"
+    },
+    {
+      "date": "2026-05-01",
+      "holidayName": "Workers' Day"
+    },
+    {
+      "date": "2026-06-16",
+      "holidayName": "Youth Day"
+    },
+    {
+      "date": "2026-08-09",
+      "holidayName": "National Women's Day"
+    },
+    {
+      "date": "2026-08-10",
+      "holidayName": "National Women's Day Observed"
+    },
+    {
+      "date": "2026-09-24",
+      "holidayName": "Heritage Day"
+    },
+    {
+      "date": "2026-12-16",
+      "holidayName": "Day of Reconciliation"
+    },
+    {
+      "date": "2026-12-25",
+      "holidayName": "Christmas Day"
+    },
+    {
+      "date": "2026-12-26",
+      "holidayName": "Day of Goodwill"
+    }
+  ]
+}

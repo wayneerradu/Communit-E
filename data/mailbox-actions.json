@@ -1,0 +1,82 @@
+[
+  {
+    "messageId": "19d1a06b26a32df7",
+    "lastReadAt": "2026-03-31T10:46:43.461Z",
+    "lastReadByEmail": "superadmin@unityincommunity.org.za",
+    "lastReadByName": "Local Super Admin",
+    "workflowStatus": "assigned-to-councillor",
+    "updatedAt": "2026-03-31T10:46:43.461Z"
+  },
+  {
+    "messageId": "19d1a3b4c9ebb383",
+    "lastReadAt": "2026-03-31T10:59:58.913Z",
+    "lastReadByEmail": "superadmin@unityincommunity.org.za",
+    "lastReadByName": "Local Super Admin",
+    "workflowStatus": "assigned-to-councillor",
+    "updatedAt": "2026-03-31T10:59:58.913Z"
+  },
+  {
+    "messageId": "19d25625741f3186",
+    "lastReadAt": "2026-03-31T10:59:58.923Z",
+    "lastReadByEmail": "superadmin@unityincommunity.org.za",
+    "lastReadByName": "Local Super Admin",
+    "workflowStatus": "assigned-to-councillor",
+    "updatedAt": "2026-03-31T10:59:58.923Z"
+  },
+  {
+    "messageId": "19d2b4f4e6f80ad7",
+    "lastReadAt": "2026-03-31T10:30:01.123Z",
+    "lastReadByEmail": "superadmin@unityincommunity.org.za",
+    "lastReadByName": "Local Super Admin",
+    "workflowStatus": "to-be-deleted",
+    "updatedAt": "2026-03-31T10:30:05.608Z"
+  },
+  {
+    "messageId": "19d352660751a475",
+    "lastReadAt": "2026-03-31T10:25:35.296Z",
+    "lastReadByEmail": "superadmin@unityincommunity.org.za",
+    "lastReadByName": "Local Super Admin",
+    "workflowStatus": "to-be-deleted",
+    "updatedAt": "2026-03-31T10:25:38.701Z"
+  },
+  {
+    "messageId": "19d37a5c4d2bea34",
+    "lastReadAt": "2026-03-31T10:25:09.434Z",
+    "lastReadByEmail": "superadmin@unityincommunity.org.za",
+    "lastReadByName": "Local Super Admin",
+    "workflowStatus": "to-be-deleted",
+    "updatedAt": "2026-03-31T10:25:15.013Z"
+  },
+  {
+    "messageId": "19d35fa1d9972d61",
+    "lastReadAt": "2026-03-31T10:25:28.157Z",
+    "lastReadByEmail": "superadmin@unityincommunity.org.za",
+    "lastReadByName": "Local Super Admin",
+    "workflowStatus": "to-be-deleted",
+    "updatedAt": "2026-03-31T10:25:31.990Z"
+  },
+  {
+    "messageId": "19d41db2cebb40ba",
+    "lastReadAt": "2026-03-31T10:19:08.978Z",
+    "lastReadByEmail": "superadmin@unityincommunity.org.za",
+    "lastReadByName": "Local Super Admin",
+    "workflowStatus": "to-be-deleted",
+    "updatedAt": "2026-03-31T10:19:08.978Z"
+  },
+  {
+    "messageId": "19d35fa13cd5dd13",
+    "lastReadAt": "2026-03-31T10:25:23.090Z",
+    "lastReadByEmail": "superadmin@unityincommunity.org.za",
+    "lastReadByName": "Local Super Admin",
+    "workflowStatus": "to-be-deleted",
+    "updatedAt": "2026-03-31T10:25:26.580Z"
+  },
+  {
+    "messageId": "19d3cb0c9094232c",
+    "lastReadAt": "2026-03-31T10:25:16.633Z",
+    "lastReadByEmail": "superadmin@unityincommunity.org.za",
+    "lastReadByName": "Local Super Admin",
+    "workflowStatus": "to-be-deleted",
+    "updatedAt": "2026-03-31T10:25:19.764Z"
+  }
+]

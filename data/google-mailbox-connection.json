@@ -1,0 +1,12 @@
+{
+  "connectedAccount": "hello@unityincommunity.org.za",
+  "accessToken": "ya29.a0Aa7MYirkc8op9m5xkeFMl7AmN9z_mBQ9rX60hI8yTWTirIcwYz8LidY8nRP603t6pa-C7rYlE23aWak1uvb5UPUllepcyp5OyJ-R39uhu7hf9kiG3P15eQiujRBla1JEvwMh3XVeXJfru1b41NjMZ77Xhw5-k4GSOTBml7lEjENcS8tEXbsoEe6ES_MSvevyNCUyEbU5aCgYKAT4SARASFQHGX2MiitEcyBMgRyHrEf7HiGSWtg0207",
+  "refreshToken": "1//03m60HBPyeTkUCgYIARAAGAMSNwF-L9IrsMyJgTgRxZ3zMdvonukW_HbnVd3ZRVRmzQ1DmUAHI-gfqp05m6fdj9HaUMu5TyFlJsg",
+  "expiresAt": "2026-04-01T00:42:40.450Z",
+  "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "openid",
+    "https://www.googleapis.com/auth/gmail.readonly"
+  ]
+}

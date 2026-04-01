@@ -1,0 +1,449 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommUNIT-E Clean Marine Wireframes</title>
+  <style>
+    :root {
+      --bg: #e8f1f1;
+      --panel: rgba(255,255,255,0.84);
+      --panel-strong: rgba(255,255,255,0.94);
+      --text: #123038;
+      --muted: #647a80;
+      --line: rgba(18,48,56,0.09);
+      --brand: #116772;
+      --brand-deep: #0a3b43;
+      --accent: #a7e2da;
+      --accent-strong: #5ebcaf;
+      --success: #2f7967;
+      --warning: #cf8b37;
+      --danger: #bf5a49;
+      --shadow: 0 24px 64px rgba(13,45,53,0.12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Aptos, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(167,226,220,0.58), transparent 24%),
+        radial-gradient(circle at top right, rgba(17,103,114,0.14), transparent 28%),
+        linear-gradient(180deg, #f4f9f8 0%, var(--bg) 100%);
+    }
+    h1, h2, h3, h4, p { margin: 0; }
+    .page { width: min(1540px, calc(100% - 32px)); margin: 18px auto 32px; display: grid; gap: 20px; }
+    .intro, .screen { border-radius: 34px; overflow: hidden; background: rgba(255,255,255,0.34); border: 1px solid rgba(255,255,255,0.58); box-shadow: var(--shadow); backdrop-filter: blur(18px); }
+    .intro { padding: 24px 28px; display: grid; gap: 12px; }
+    .intro p, .screen-head p, .meta, .card p, .tiny { color: var(--muted); }
+    .jump-row, .actions, .chips, .toolbar, .stat-row, .field-grid, .two-col, .three-col { display: grid; gap: 12px; }
+    .jump-row { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+    .jump { padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,0.8); border: 1px solid rgba(18,48,56,0.08); text-decoration: none; color: var(--text); font-weight: 700; text-align: center; font-size: 13px; }
+    .screen-head { padding: 20px 24px; background: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(18,48,56,0.08); display: grid; gap: 8px; }
+    .shell { display: grid; grid-template-columns: 250px 1fr; min-height: 720px; }
+    .sidebar { background: rgba(9,50,58,0.96); color: #eff9f8; padding: 24px 18px; display: flex; flex-direction: column; gap: 16px; }
+    .brand { display: flex; gap: 12px; align-items: center; }
+    .mark { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font-weight: 800; background: linear-gradient(140deg, var(--accent), var(--accent-strong)); color: #10353a; }
+    .sidebar p, .profile span { color: rgba(239,249,248,0.72); }
+    .nav { display: grid; gap: 8px; }
+    .nav a { text-decoration: none; color: inherit; padding: 12px 14px; border-radius: 16px; border: 1px solid transparent; font-weight: 700; }
+    .nav a.active { background: rgba(167,226,220,0.12); border-color: rgba(167,226,220,0.18); }
+    .profile { margin-top: auto; padding: 16px; border-radius: 20px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.08); display: grid; gap: 4px; font-size: 13px; }
+    .content { padding: 24px; display: grid; gap: 16px; background: radial-gradient(circle at top left, rgba(167,226,220,0.18), transparent 22%), linear-gradient(180deg, rgba(248,252,251,0.72), rgba(232,241,241,0.86)); }
+    .topbar, .card-head, .item-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .actions, .chips, .toolbar, .stat-row { grid-template-columns: repeat(auto-fit, minmax(120px, max-content)); align-items: center; }
+    .two-col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three-col { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .button, .chip, .status, .badge { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; border: 1px solid rgba(18,48,56,0.08); background: rgba(255,255,255,0.8); }
+    .button.primary { color: white; border-color: transparent; background: linear-gradient(135deg, var(--brand), var(--brand-deep)); }
+    .card, .stat, .field, .item, .surface { border: 1px solid var(--line); background: var(--panel); box-shadow: 0 14px 30px rgba(13,45,53,0.08); }
+    .card, .stat, .surface { border-radius: 24px; padding: 18px; display: grid; gap: 12px; }
+    .stat strong { font-size: 34px; }
+    .field { padding: 14px 16px; border-radius: 18px; background: var(--panel-strong); display: grid; gap: 4px; }
+    .field label { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+    .item { padding: 14px 16px; border-radius: 18px; display: grid; gap: 6px; }
+    .status.good, .badge.good { background: rgba(47,121,103,0.14); color: #1f6050; }
+    .status.warn, .badge.warn { background: rgba(207,139,55,0.15); color: #8a5a16; }
+    .status.bad, .badge.bad { background: rgba(191,90,73,0.15); color: #973c2b; }
+    .status.info, .badge.info { background: rgba(17,103,114,0.1); color: #0f5560; }
+    .avatar { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(140deg, #d7f0ec, #9fd8cf); color: #133941; font-weight: 800; flex-shrink: 0; }
+    .person { display: flex; gap: 12px; align-items: center; }
+    .map, .calendar, .kanban { min-height: 260px; border-radius: 22px; border: 1px solid rgba(18,48,56,0.08); background: linear-gradient(180deg, rgba(223,244,241,0.96), rgba(207,233,231,0.92)), repeating-linear-gradient(90deg, rgba(17,103,114,0.03), rgba(17,103,114,0.03) 18px, rgba(17,103,114,0.01) 18px, rgba(17,103,114,0.01) 36px); padding: 18px; overflow: hidden; position: relative; }
+    .map.center { display: grid; place-items: center; text-align: center; }
+    .road { position: absolute; left: 12%; right: 12%; height: 6px; border-radius: 999px; background: rgba(18,48,56,0.22); box-shadow: 0 0 0 14px rgba(255,255,255,0.24); }
+    .road.one { top: 34%; transform: rotate(-5deg); }
+    .road.two { top: 58%; transform: rotate(3deg); }
+    .pin { position: absolute; width: 18px; height: 18px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); }
+    .pin::after { content: ""; position: absolute; top: 5px; left: 5px; width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.94); }
+    .pin.green { background: var(--success); }
+    .pin.orange { background: var(--warning); }
+    .pin.red { background: var(--danger); }
+    .pin.blue { background: var(--brand); }
+    .pin.a { top: 28%; left: 28%; }
+    .pin.b { top: 41%; left: 48%; }
+    .pin.c { top: 52%; left: 24%; }
+    .pin.d { top: 47%; left: 69%; }
+    .pin.e { top: 65%; left: 56%; }
+    .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+    .day { min-height: 80px; padding: 10px; border-radius: 16px; background: rgba(255,255,255,0.72); border: 1px solid rgba(18,48,56,0.06); display: grid; gap: 6px; font-size: 12px; }
+    .event { padding: 4px 6px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+    .event.meeting { background: rgba(17,103,114,0.12); color: #0f5560; }
+    .event.fault { background: rgba(191,90,73,0.12); color: #933829; }
+    .event.project { background: rgba(47,121,103,0.12); color: #235d50; }
+    .event.resolution { background: rgba(207,139,55,0.12); color: #8a5a16; }
+    .kanban { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+    .lane { padding: 12px; border-radius: 18px; background: rgba(255,255,255,0.72); border: 1px solid rgba(18,48,56,0.07); display: grid; gap: 10px; align-content: start; }
+    .task { padding: 10px 12px; border-radius: 14px; background: rgba(17,103,114,0.06); border: 1px solid rgba(17,103,114,0.08); display: grid; gap: 6px; }
+    @media (max-width: 1280px) { .two-col, .three-col, .field-grid, .calendar, .kanban { grid-template-columns: 1fr; } }
+    @media (max-width: 960px) { .shell { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="intro">
+      <h1>CommUNIT-E Platform Wireframes: Clean Marine</h1>
+      <p>This gallery covers the remaining platform screens in the approved design direction. Home Dashboard and Residents Hub already have dedicated visual mockups; this file rounds out the rest so you have one consistent pack.</p>
+      <div class="jump-row">
+        <a class="jump" href="#profile">Profile</a>
+        <a class="jump" href="#faults">Faults</a>
+        <a class="jump" href="#infrastructure">Infrastructure</a>
+        <a class="jump" href="#projects">Projects</a>
+        <a class="jump" href="#meetings">Meetings</a>
+        <a class="jump" href="#resolutions">Resolutions</a>
+        <a class="jump" href="#parking-lot">Parking Lot</a>
+        <a class="jump" href="#pro">PRO</a>
+        <a class="jump" href="#super-admin">Super Admin</a>
+        <a class="jump" href="#public-form">Public Form</a>
+        <a class="jump" href="#public-faults">Public Faults</a>
+      </div>
+    </section>
+
+    <section class="screen" id="profile">
+      <div class="screen-head"><h2>Profile, Presence And Preference</h2><p>Operational identity, status visibility, and curated preferences.</p></div>
+      <div class="shell">
+        <aside class="sidebar">
+          <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>My account</p></div></div>
+          <nav class="nav"><a href="#">Home</a><a class="active" href="#">My Profile</a><a href="#">Residents</a><a href="#">Faults</a><a href="#">Projects</a></nav>
+          <div class="profile"><strong>Naledi Mokoena</strong><span>Super Admin</span><span>Active</span></div>
+        </aside>
+        <main class="content">
+          <div class="topbar"><div><h3>My Profile</h3><p>Google identity anchored, app details editable.</p></div><div class="actions"><span class="button">Preview Avatar</span><span class="button primary">Save Changes</span></div></div>
+          <div class="two-col">
+            <article class="card">
+              <div class="person"><div class="avatar">NM</div><div><h4>Naledi Mokoena</h4><p>Nickname: Nals Â· Birthday: 14 August</p></div></div>
+              <div class="chips"><span class="status good">Active</span><span class="chip">Google Photo Synced</span><span class="chip">Delegate: Peter</span></div>
+              <div class="field-grid">
+                <div class="field"><label>Email</label><strong>naledi@unityincommunity.org.za</strong></div>
+                <div class="field"><label>Mobile</label><strong>+27 82 555 0192</strong></div>
+                <div class="field"><label>Address</label><strong>12 Palm Crescent, Mount Vernon</strong></div>
+                <div class="field"><label>Working Hours</label><strong>08:00 - 17:00</strong></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="card-head"><div><h4>Preferences</h4><p>Simple, safe controls for non-technical admins.</p></div><span class="badge info">Clean Marine</span></div>
+              <div class="item"><div class="item-head"><strong>Status Note</strong><span class="tiny">Platform-wide</span></div><p>Available until 15:30, then in meeting.</p></div>
+              <div class="item"><div class="item-head"><strong>Notifications</strong><span class="tiny">In-app, Email, Telegram</span></div><p>Critical alerts may override Busy and DND.</p></div>
+              <div class="item"><div class="item-head"><strong>Workload</strong><span class="tiny">Live</span></div><p>5 open faults, 3 inbox threads, 4 project tasks.</p></div>
+            </article>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen" id="faults">
+      <div class="screen-head"><h2>Faults Hub</h2><p>Incident management, escalations, replies, resident confirmation, and public-safe visibility.</p></div>
+      <div class="shell">
+        <aside class="sidebar">
+          <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>Fault operations</p></div></div>
+          <nav class="nav"><a href="#">Home</a><a href="#">Residents</a><a class="active" href="#">Faults</a><a href="#">Infrastructure</a><a href="#">Projects</a></nav>
+          <div class="profile"><strong>Open faults: 34</strong><span>3 due today</span><span>Oldest: 19 days</span></div>
+        </aside>
+        <main class="content">
+          <div class="topbar"><div><h3>Faults Hub</h3><p>Master fault records prevent duplication and keep public visibility clean.</p></div><div class="actions"><span class="button">Public Dashboard</span><span class="button">Escalations Due</span><span class="button primary">Log Fault</span></div></div>
+          <div class="stat-row">
+            <article class="stat"><span class="meta">Open</span><strong>34</strong></article>
+            <article class="stat"><span class="meta">Awaiting Response</span><strong>11</strong></article>
+            <article class="stat"><span class="meta">Escalate+</span><strong>4</strong></article>
+            <article class="stat"><span class="meta">Escalate++</span><strong>2</strong></article>
+            <article class="stat"><span class="meta">Oldest Open</span><strong>19d</strong></article>
+          </div>
+          <div class="two-col">
+            <article class="card">
+              <div class="card-head"><div><h4>Master Fault Record</h4><p>One incident, many affected residents.</p></div><span class="status bad">Critical</span></div>
+              <div class="chips"><span class="chip">Ref# EL-44512</span><span class="chip">Electricity</span><span class="chip">Streetlight outage</span><span class="chip">Palm Crescent</span><span class="chip">5 affected residents</span></div>
+              <div class="item"><div class="item-head"><strong>Day 0</strong><span class="status info">First Escalation</span></div><p>Email sent to councillor and primary department contacts.</p></div>
+              <div class="item"><div class="item-head"><strong>Day 3</strong><span class="status warn">Nudge</span></div><p>Feedback requested with updated admin note.</p></div>
+              <div class="item"><div class="item-head"><strong>Inbox Reply</strong><span class="status good">Matched</span></div><p>Municipality acknowledged outage and promised inspection.</p></div>
+            </article>
+            <article class="card">
+              <div class="card-head"><div><h4>Resident And Public Handling</h4><p>Internal detail separated from public-safe views.</p></div><span class="badge info">Visible Publicly</span></div>
+              <div class="item"><div class="item-head"><strong>Resident confirmation</strong><span class="tiny">Required</span></div><p>Escalated on behalf of Sibongile Ndlovu. Closure cannot proceed yet.</p></div>
+              <div class="item"><div class="item-head"><strong>Public dashboard</strong><span class="tiny">Safe fields only</span></div><p>Palm Crescent Â· Streetlight outage Â· Open for 8 days.</p></div>
+              <div class="item"><div class="item-head"><strong>Action queue</strong><span class="status warn">Due today</span></div><p>Water leak on Bellair Road needs Escalate+.</p></div>
+            </article>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen" id="infrastructure">
+      <div class="screen-head"><h2>Infrastructure Hub</h2><p>Living asset intelligence with layers, photos, IDs, and quick fault creation.</p></div>
+      <div class="shell">
+        <aside class="sidebar">
+          <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>Infrastructure</p></div></div>
+          <nav class="nav"><a href="#">Home</a><a href="#">Faults</a><a class="active" href="#">Infrastructure</a><a href="#">Projects</a><a href="#">Help</a></nav>
+          <div class="profile"><strong>Layers live</strong><span>Pipes Â· Fiber Â· Poles</span><span>9 need review</span></div>
+        </aside>
+        <main class="content">
+          <div class="topbar"><div><h3>Infrastructure Hub</h3><p>Manual-first mapping that improves over time and helps fault logging become faster.</p></div><div class="actions"><span class="button">Import GIS</span><span class="button">Needs Attention</span><span class="button primary">Add Asset</span></div></div>
+          <div class="two-col">
+            <article class="card">
+              <div class="card-head"><div><h4>Layered Asset Map</h4><p>Readable icons and colors for different asset types.</p></div><div class="chips"><span class="chip">Streetlights</span><span class="chip">Fiber</span><span class="chip">Pipes</span></div></div>
+              <div class="map center">
+                <div class="road one"></div><div class="road two"></div>
+                <div class="pin blue a"></div><div class="pin green b"></div><div class="pin orange c"></div><div class="pin red d"></div><div class="pin blue e"></div>
+                <div><h4>Mount Vernon Asset Layer</h4><p>Open any asset to verify it, upload a photo, or log a fault directly.</p></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="card-head"><div><h4>Asset Snapshot</h4><p>Fast operational detail, not GIS complexity.</p></div><span class="status warn">Needs Verification</span></div>
+              <div class="field-grid">
+                <div class="field"><label>CommUNIT-E ID</label><strong>CE-POLE-014</strong></div>
+                <div class="field"><label>Official Ref</label><strong>Pending</strong></div>
+                <div class="field"><label>Type</label><strong>Streetlight Pole</strong></div>
+                <div class="field"><label>Linked Faults</label><strong>3 open</strong></div>
+              </div>
+              <div class="toolbar"><span class="button">Upload Photo</span><span class="button">Correct GPS</span><span class="button primary">Create Fault</span></div>
+            </article>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen" id="projects">
+      <div class="screen-head"><h2>Projects Hub</h2><p>Light collaborative project tracking with kanban, blockers, and nudges.</p></div>
+      <div class="shell">
+        <aside class="sidebar">
+          <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>Projects</p></div></div>
+          <nav class="nav"><a href="#">Home</a><a href="#">Faults</a><a class="active" href="#">Projects</a><a href="#">Meetings</a><a href="#">Help</a></nav>
+          <div class="profile"><strong>Bellair Primary</strong><span>7 tasks active</span><span>2 stuck</span></div>
+        </aside>
+        <main class="content">
+          <div class="topbar"><div><h3>Projects Hub</h3><p>Built for keeping things moving, not heavy formal project management.</p></div><div class="actions"><span class="button">My Tasks</span><span class="button">Stuck Tasks</span><span class="button primary">New Project</span></div></div>
+          <div class="kanban">
+            <div class="lane"><strong>Not Started</strong><div class="task"><strong>Crossing guard agreement</strong><p>Waiting to assign owner.</p></div></div>
+            <div class="lane"><strong>Started</strong><div class="task"><strong>Road markings request</strong><p>Submitted to municipality.</p></div></div>
+            <div class="lane"><strong>In Progress</strong><div class="task"><strong>Warning lights follow-up</strong><p>Peter chasing Electricity.</p></div></div>
+            <div class="lane"><strong>Stuck</strong><div class="task"><strong>Paint contractor</strong><p>No supplier response in 6 days.</p></div></div>
+            <div class="lane"><strong>Complete</strong><div class="task"><strong>Site walk completed</strong><p>Photos captured.</p></div></div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen" id="meetings">
+      <div class="screen-head"><h2>Meetings And Minutes</h2><p>Structured meetings, AI clean-up, sign-off, and shared calendar integration.</p></div>
+      <div class="shell">
+        <aside class="sidebar">
+          <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>Meetings</p></div></div>
+          <nav class="nav"><a href="#">Home</a><a class="active" href="#">Meetings</a><a href="#">Resolutions</a><a href="#">Calendar</a><a href="#">Projects</a></nav>
+          <div class="profile"><strong>Next Meeting</strong><span>3 Apr Â· 18:30</span><span>Committee meeting</span></div>
+        </aside>
+        <main class="content">
+          <div class="topbar"><div><h3>Meetings And Minutes</h3><p>Capture once from the phone, then turn it into a governed record.</p></div><div class="actions"><span class="button">Shared Calendar</span><span class="button">Draft Minutes</span><span class="button primary">New Meeting</span></div></div>
+          <div class="two-col">
+            <article class="card">
+              <div class="field-grid">
+                <div class="field"><label>Date</label><strong>3 April 2026</strong></div>
+                <div class="field"><label>Time</label><strong>18:30</strong></div>
+                <div class="field"><label>Location</label><strong>Community Hall</strong></div>
+                <div class="field"><label>Type</label><strong>Operations Meeting</strong></div>
+              </div>
+              <div class="item"><div class="item-head"><strong>AI Draft Ready</strong><span class="status good">Processed</span></div><p>Transcript cleaned, votes identified, resolutions extracted, action items prepared.</p></div>
+            </article>
+            <article class="card">
+              <div class="item"><div class="item-head"><strong>Secretary review</strong><span class="status warn">Awaiting</span></div><p>Deputy may substitute if needed.</p></div>
+              <div class="item"><div class="item-head"><strong>Chair sign-off</strong><span class="tiny">After secretary</span></div><p>Chairperson or deputy finalizes the record.</p></div>
+              <div class="item"><div class="item-head"><strong>Output</strong><span class="status info">Automatic</span></div><p>PDF, email distribution, Telegram notification, tasks/projects from action items.</p></div>
+            </article>
+          </div>
+          <div class="calendar">
+            <div class="day"><strong>Mon</strong><div class="event meeting">Ops meeting</div></div>
+            <div class="day"><strong>Tue</strong><div class="event project">School follow-up</div></div>
+            <div class="day"><strong>Wed</strong><div class="event resolution">Vote closes</div></div>
+            <div class="day"><strong>Thu</strong><div class="event project">Refuse collection</div></div>
+            <div class="day"><strong>Fri</strong><div class="event fault">Escalate+ due</div></div>
+            <div class="day"><strong>Sat</strong></div>
+            <div class="day"><strong>Sun</strong></div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen" id="resolutions">
+      <div class="screen-head"><h2>Resolutions Hub</h2><p>Visible voting, 4-yes quorum, and clean revote support.</p></div>
+      <div class="shell">
+        <aside class="sidebar">
+          <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>Resolutions</p></div></div>
+          <nav class="nav"><a href="#">Home</a><a href="#">Meetings</a><a class="active" href="#">Resolutions</a><a href="#">Parking Lot</a><a href="#">Help</a></nav>
+          <div class="profile"><strong>Open Votes</strong><span>3 active</span><span>1 closes today</span></div>
+        </aside>
+        <main class="content">
+          <div class="topbar"><div><h3>Resolutions Hub</h3><p>Governance that no longer gets lost in WhatsApp threads.</p></div><div class="actions"><span class="button">Closing Soon</span><span class="button primary">New Resolution</span></div></div>
+          <div class="two-col">
+            <article class="card">
+              <div class="card-head"><div><h4>Yes / No Resolution</h4><p>Four yes votes required to pass.</p></div><span class="status warn">12h left</span></div>
+              <div class="item"><strong>Approve branded table cloth purchase?</strong><p>Needed for public events and meetings.</p></div>
+              <div class="item"><div class="item-head"><div class="person"><div class="avatar">NM</div><strong>Naledi</strong></div><span class="badge good">Yes</span></div></div>
+              <div class="item"><div class="item-head"><div class="person"><div class="avatar">SZ</div><strong>Sasha</strong></div><span class="badge bad">No</span></div></div>
+            </article>
+            <article class="card">
+              <div class="card-head"><div><h4>Multi-option Vote</h4><p>Highest option moves to revote if needed.</p></div><span class="status info">Revote Ready</span></div>
+              <div class="item"><div class="item-head"><strong>Option A Â· Red polo shirts</strong><span class="badge warn">6 votes</span></div></div>
+              <div class="item"><div class="item-head"><strong>Option B Â· Navy golf shirts</strong><span class="badge good">8 votes</span></div></div>
+              <div class="item"><div class="item-head"><strong>Option C Â· Reflective jackets</strong><span class="badge warn">7 votes</span></div></div>
+            </article>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen" id="parking-lot">
+      <div class="screen-head"><h2>Parking Lot Hub</h2><p>Ranked, visible, and easy to move into action later.</p></div>
+      <div class="shell">
+        <aside class="sidebar">
+          <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>Parking lot</p></div></div>
+          <nav class="nav"><a href="#">Home</a><a class="active" href="#">Parking Lot</a><a href="#">Resolutions</a><a href="#">Projects</a><a href="#">Help</a></nav>
+          <div class="profile"><strong>Quick Wins</strong><span>8 low-cost ideas</span><span>3 waiting for funds</span></div>
+        </aside>
+        <main class="content">
+          <div class="topbar"><div><h3>Parking Lot Hub</h3><p>A proper place for ideas so nothing useful disappears.</p></div><div class="actions"><span class="button">High Impact</span><span class="button">Waiting For Funds</span><span class="button primary">Add Idea</span></div></div>
+          <div class="three-col">
+            <article class="card"><div class="card-head"><div><h4>Community table cloth</h4><p>Branding</p></div><span class="status good">Quick Win</span></div><div class="chips"><span class="chip">Urgency: Medium</span><span class="chip">Cost: Low</span><span class="chip">Impact: High</span></div></article>
+            <article class="card"><div class="card-head"><div><h4>Volunteer caps</h4><p>Operations</p></div><span class="status warn">Under Review</span></div><div class="chips"><span class="chip">Priority: Medium</span><span class="chip">Cost: Medium</span></div></article>
+            <article class="card"><div class="card-head"><div><h4>Street-banner signage</h4><p>Community</p></div><span class="status info">Waiting For Funds</span></div><div class="chips"><span class="chip">Priority: High</span><span class="chip">Impact: High</span></div></article>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen" id="pro">
+      <div class="screen-head"><h2>PRO Hub</h2><p>Holiday-aware planning, approvals, publishing, and media statements.</p></div>
+      <div class="shell">
+        <aside class="sidebar">
+          <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>PRO hub</p></div></div>
+          <nav class="nav"><a href="#">Home</a><a href="#">Calendar</a><a class="active" href="#">PRO</a><a href="#">Vault</a><a href="#">Help</a></nav>
+          <div class="profile"><strong>Content Queue</strong><span>5 pending approval</span><span>2 statements</span></div>
+        </aside>
+        <main class="content">
+          <div class="topbar"><div><h3>PRO Hub</h3><p>One calm workflow for content planning, approval, and outbound communications.</p></div><div class="actions"><span class="button">Holiday Sources</span><span class="button">Media Statements</span><span class="button primary">Draft Campaign</span></div></div>
+          <div class="two-col">
+            <article class="card">
+              <div class="card-head"><div><h4>Content Calendar</h4><p>SA, international, religious, and community dates.</p></div><span class="badge good">Synced Yearly</span></div>
+              <div class="calendar">
+                <div class="day"><strong>Freedom Day</strong><div class="event project">Post planned</div></div>
+                <div class="day"><strong>Easter</strong><div class="event meeting">Draft content</div></div>
+                <div class="day"><strong>Heritage Day</strong><div class="event project">Artwork due</div></div>
+                <div class="day"><strong>School Safety</strong><div class="event fault">Notice</div></div>
+                <div class="day"><strong>Mandela Day</strong></div>
+                <div class="day"><strong>Community Clean-up</strong></div>
+                <div class="day"><strong>Refuse Day</strong></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="card-head"><div><h4>Publishing And Statements</h4><p>Automate where official connectors allow it.</p></div><span class="status warn">2 approvals required</span></div>
+              <div class="item"><div class="item-head"><strong>Freedom Day Post</strong><span class="badge warn">Pending Approval</span></div><p>Targets: Website, WhatsApp, Facebook, Instagram.</p></div>
+              <div class="item"><div class="item-head"><strong>Road Safety Statement</strong><span class="badge info">Draft PDF</span></div><p>Caxton, IOL, News24, The Post, The Mercury.</p></div>
+              <div class="item"><div class="item-head"><strong>Publishing Model</strong><span class="tiny">Connector-aware</span></div><p>WordPress automated, WhatsApp guided manual share, social connectors where possible.</p></div>
+            </article>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen" id="super-admin">
+      <div class="screen-head"><h2>Super Admin Control Plane</h2><p>Settings, connectors, health, governance, jobs, sessions, and oversight.</p></div>
+      <div class="shell">
+        <aside class="sidebar">
+          <div class="brand"><div class="mark">CE</div><div><h3>CommUNIT-E</h3><p>Control plane</p></div></div>
+          <nav class="nav"><a href="#">Home</a><a class="active" href="#">Super Admin</a><a href="#">Templates</a><a href="#">Connectors</a><a href="#">Maintenance</a></nav>
+          <div class="profile"><strong>Platform Healthy</strong><span>2 warnings</span><span>7 sessions</span></div>
+        </aside>
+        <main class="content">
+          <div class="topbar"><div><h3>Super Admin Console</h3><p>The real operational control plane for the platform.</p></div><div class="actions"><span class="button">Export Logs</span><span class="button">Maintenance Mode</span><span class="button primary">Save Policies</span></div></div>
+          <div class="stat-row">
+            <article class="stat"><span class="meta">Sessions</span><strong>7</strong></article>
+            <article class="stat"><span class="meta">Connectors</span><strong>5</strong></article>
+            <article class="stat"><span class="meta">Jobs</span><strong>9</strong></article>
+            <article class="stat"><span class="meta">Quality Alerts</span><strong>23</strong></article>
+            <article class="stat"><span class="meta">Exports Today</span><strong>4</strong></article>
+          </div>
+          <div class="two-col">
+            <article class="card">
+              <div class="card-head"><div><h4>Session Policy</h4><p>Idle timeout, lifetime, warning, and multiple sessions.</p></div><span class="badge info">Policy</span></div>
+              <div class="field-grid">
+                <div class="field"><label>Idle Timeout</label><strong>30 minutes</strong></div>
+                <div class="field"><label>Warn Before Expiry</label><strong>5 minutes</strong></div>
+                <div class="field"><label>Absolute Life</label><strong>12 hours</strong></div>
+                <div class="field"><label>Multiple Sessions</label><strong>Allowed</strong></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="card-head"><div><h4>Connector And Failure Center</h4><p>One place to see what needs attention.</p></div><span class="badge warn">Attention</span></div>
+              <div class="item"><div class="item-head"><strong>Google Workspace</strong><span class="status good">Connected</span></div></div>
+              <div class="item"><div class="item-head"><strong>WordPress</strong><span class="status warn">Token Review</span></div></div>
+              <div class="item"><div class="item-head"><strong>Mailbox Sync</strong><span class="status warn">1 unmatched reply</span></div></div>
+            </article>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen" id="public-form">
+      <div class="screen-head"><h2>Public Resident Application</h2><p>Simple, mobile-friendly, strict validation, and clear consent.</p></div>
+      <div class="content">
+        <div class="topbar"><div><h3>Join The Community Group</h3><p>Mount Vernon, Durban, 4094 residents only.</p></div><div class="actions"><span class="badge info">Public</span></div></div>
+        <div class="two-col">
+          <article class="card">
+            <div class="field-grid">
+              <div class="field"><label>Full Name</label><strong>Applicant input</strong></div>
+              <div class="field"><label>Mobile Number</label><strong>WhatsApp format</strong></div>
+              <div class="field"><label>Street Number</label><strong>Applicant input</strong></div>
+              <div class="field"><label>Road Name</label><strong>Applicant input</strong></div>
+              <div class="field"><label>Security Company</label><strong>Dropdown</strong></div>
+              <div class="field"><label>Email Address</label><strong>Applicant input</strong></div>
+            </div>
+          </article>
+          <article class="card">
+            <div class="item"><strong>POPIA understanding</strong><p>Required.</p></div>
+            <div class="item"><strong>WhatsApp rules accepted</strong><p>Required.</p></div>
+            <div class="item"><strong>Applying for own household</strong><p>Required.</p></div>
+            <div class="toolbar"><span class="button primary">Submit Application</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="public-faults">
+      <div class="screen-head"><h2>Public Fault Dashboard</h2><p>Transparent and safe, with no private data.</p></div>
+      <div class="content">
+        <div class="topbar"><div><h3>Public Fault Dashboard</h3><p>Search by reference, road, or fault type.</p></div><div class="actions"><span class="button">Search Ref# or Road</span></div></div>
+        <div class="stat-row">
+          <article class="stat"><span class="meta">Total Faults</span><strong>84</strong></article>
+          <article class="stat"><span class="meta">Open</span><strong>22</strong></article>
+          <article class="stat"><span class="meta">Resolved This Month</span><strong>11</strong></article>
+          <article class="stat"><span class="meta">By Nature</span><strong>6</strong></article>
+        </div>
+        <article class="card">
+          <div class="item"><div class="item-head"><strong>Ref# EL-44512 Â· Palm Crescent</strong><span class="status warn">Awaiting Municipality</span></div><p>Streetlight outage Â· Open for 8 days</p></div>
+          <div class="item"><div class="item-head"><strong>Ref# WT-22041 Â· Bellair Road</strong><span class="status info">In Progress</span></div><p>Water leak Â· Open for 4 days</p></div>
+          <div class="item"><div class="item-head"><strong>Ref# RD-10492 Â· Bluegum Road</strong><span class="status good">Resolved</span></div><p>Pothole repair Â· Visible until monthly rollover</p></div>
+        </article>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
+

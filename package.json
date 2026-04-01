@@ -1,0 +1,43 @@
+{
+  "name": "communit-e",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3010",
+    "build": "next build",
+    "start": "next start -p 3010",
+    "lint": "eslint .",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "node prisma/seed.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@googlemaps/markerclusterer": "^2.6.2",
+    "@prisma/client": "^6.5.0",
+    "bcryptjs": "^2.4.3",
+    "clsx": "^2.1.1",
+    "jspdf": "^4.2.1",
+    "leaflet": "^1.9.4",
+    "next": "^15.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "xlsx": "^0.18.5",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/leaflet": "^1.9.16",
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.1",
+    "playwright": "^1.58.2",
+    "prisma": "^6.5.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
+  }
+}
