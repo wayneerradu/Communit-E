@@ -1,13 +1,13 @@
 import { spawn } from "node:child_process";
 
-const TEMP_HARDCODED_DATABASE_URL =
-  "postgres://u05c5f723:dbp_AZ7M4GHw-DtMxqYzuqDt0nbdIevoJJoe@db-6e9ee264e424:5432/db_community-db?sslmode=disable";
-
 console.log(process.env.DATABASE_URL ? process.env.DATABASE_URL.slice(0, 20) : "MISSING");
 
 function sanitizeDatabaseUrl(raw) {
   if (!raw) return "";
-  let value = String(raw).trim();
+  let value = String(raw)
+    // Remove hidden control/zero-width chars that can appear from copy/paste in cloud UIs.
+    .replace(/[\u0000-\u001f\u007f\u200b\u200c\u200d\u2060\ufeff]/g, "")
+    .trim();
 
   if (value.startsWith("DATABASE_URL=")) {
     value = value.slice("DATABASE_URL=".length).trim();
@@ -24,10 +24,6 @@ function sanitizeDatabaseUrl(raw) {
 }
 
 function resolveDatabaseUrlFromEnv() {
-  // Temporary diagnostic override to isolate environment-variable injection issues.
-  const hardcoded = sanitizeDatabaseUrl(TEMP_HARDCODED_DATABASE_URL);
-  if (hardcoded) return hardcoded;
-
   const direct = sanitizeDatabaseUrl(process.env.DATABASE_URL);
   if (direct) return direct;
 
