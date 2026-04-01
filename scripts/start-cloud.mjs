@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import pg from "pg";
 
 console.log(process.env.DATABASE_URL ? process.env.DATABASE_URL.slice(0, 20) : "MISSING");
 
@@ -72,6 +73,38 @@ function run(command, args, env) {
   });
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForDB(connectionString, retries = 10, delayMs = 3000) {
+  for (let attempt = 1; attempt <= retries; attempt += 1) {
+    const pool = new pg.Pool({
+      connectionString,
+      max: 1,
+      connectionTimeoutMillis: 5000
+    });
+
+    try {
+      await pool.query("SELECT 1");
+      console.log("[start:cloud] DB is ready.");
+      await pool.end();
+      return;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.log(
+        `[start:cloud] DB not ready, retrying in ${Math.round(delayMs / 1000)}s... (${attempt}/${retries}) - ${message}`
+      );
+      await pool.end();
+      if (attempt < retries) {
+        await sleep(delayMs);
+      }
+    }
+  }
+
+  throw new Error("Could not connect to database after multiple retries.");
+}
+
 const resolved = resolveDatabaseUrlFromEnv();
 const sanitized = resolved.value;
 
@@ -85,6 +118,14 @@ if (!sanitized || (!sanitized.startsWith("postgres://") && !sanitized.startsWith
 process.env.DATABASE_URL = sanitized;
 console.log(`[start:cloud] DATABASE_URL source: ${resolved.source}`);
 console.log(`[start:cloud] DATABASE_URL accepted: ${maskDatabaseUrl(sanitized)}`);
+
+const dbWaitRetries = Number.parseInt(process.env.DB_WAIT_RETRIES ?? "10", 10);
+const dbWaitDelayMs = Number.parseInt(process.env.DB_WAIT_DELAY_MS ?? "3000", 10);
+await waitForDB(
+  sanitized,
+  Number.isFinite(dbWaitRetries) && dbWaitRetries > 0 ? dbWaitRetries : 10,
+  Number.isFinite(dbWaitDelayMs) && dbWaitDelayMs > 0 ? dbWaitDelayMs : 3000
+);
 
 const prismaBin = process.platform === "win32" ? "prisma.cmd" : "prisma";
 
