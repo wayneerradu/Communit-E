@@ -1,4 +1,4 @@
-const CACHE_NAME = "communite-cache-v2";
+const CACHE_NAME = "communite-cache-v3";
 const OFFLINE_URL = "/offline.html";
 const PRECACHE_URLS = [OFFLINE_URL, "/manifest.webmanifest", "/icons/icon-192.svg", "/icons/icon-512.svg"];
 
@@ -48,16 +48,15 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Cache-first only for static assets.
+  // Cache-first only for non-critical static assets.
+  // Do not cache Next.js runtime/app bundles to avoid stale Server Action IDs across deploys.
   const destination = request.destination;
   const isStaticAsset =
-    destination === "script" ||
-    destination === "style" ||
     destination === "image" ||
     destination === "font" ||
     requestUrl.pathname === "/manifest.webmanifest" ||
     requestUrl.pathname.startsWith("/icons/") ||
-    requestUrl.pathname.startsWith("/_next/static/");
+    (requestUrl.pathname.startsWith("/_next/static/media/") && destination === "image");
 
   if (!isStaticAsset) {
     return;
