@@ -1,36 +1,9 @@
--- Migration: 0002_align_schema
--- Aligns the database schema with types/domain.ts
--- Safe to run on a fresh DB or on top of migration 0001.
-
--- ─── Step 1: Add missing enum values ─────────────────────────────────────────
-
--- ResidentStatus: add LEAVER
-DO $$ BEGIN
-  ALTER TYPE "ResidentStatus" ADD VALUE IF NOT EXISTS 'LEAVER';
-EXCEPTION WHEN duplicate_object THEN null;
-END $$;
-
--- Role: remove RESIDENT (residents don't log in)
--- PostgreSQL can't DROP enum values directly; we rename to keep data safe.
--- If any row has role='RESIDENT' it will remain valid until cleaned up.
--- New code never assigns this role.
-
--- FaultStatus: migrate old values → new canonical set
--- Add new values first (safe), then we migrate data below.
-DO $$ BEGIN
-  ALTER TYPE "FaultStatus" ADD VALUE IF NOT EXISTS 'ESCALATED';
-  ALTER TYPE "FaultStatus" ADD VALUE IF NOT EXISTS 'IN_PROGRESS';
-  ALTER TYPE "FaultStatus" ADD VALUE IF NOT EXISTS 'CLOSED';
-EXCEPTION WHEN duplicate_object THEN null;
-END $$;
-
--- ProjectStatus: add ON_HOLD
-DO $$ BEGIN
-  ALTER TYPE "ProjectStatus" ADD VALUE IF NOT EXISTS 'ON_HOLD';
-EXCEPTION WHEN duplicate_object THEN null;
-END $$;
+-- Migration: 0003_align_schema_data
+-- Part 2: All data migrations, column additions, and new tables.
+-- Runs after 0002_align_schema has committed the new enum values.
 
 -- ─── Step 2: Migrate old FaultStatus data to new values ──────────────────────
+-- Note: enum values ESCALATED, IN_PROGRESS, CLOSED are now safe to use.
 
 UPDATE "Fault" SET "status" = 'ESCALATED'   WHERE "status" IN ('REPORTED', 'ASSIGNED');
 UPDATE "Fault" SET "status" = 'IN_PROGRESS'  WHERE "status" = 'IN_PROGRESS';
