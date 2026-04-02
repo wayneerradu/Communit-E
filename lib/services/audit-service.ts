@@ -8,8 +8,26 @@
  * Once the full Prisma migration is complete, the JSON-file path can be removed.
  */
 
-import { appendGovernanceAudit } from "@/lib/governance-audit-store";
+import { appendGovernanceAudit, type GovernanceAuditEntry } from "@/lib/governance-audit-store";
 import { isDatabaseConfigured, prisma } from "@/lib/prisma";
+
+type GovernanceArea = GovernanceAuditEntry["area"];
+
+const ENTITY_TYPE_TO_AREA: Record<string, GovernanceArea> = {
+  fault: "faults",
+  resident: "residents",
+  project: "projects",
+  projects: "projects",
+  communication: "communications",
+  prcomm: "communications",
+  resolution: "resolutions",
+  import: "imports",
+  settings: "settings",
+};
+
+function toGovernanceArea(entityType: string): GovernanceArea {
+  return ENTITY_TYPE_TO_AREA[entityType.toLowerCase()] ?? "settings";
+}
 
 export type AuditSource = "manual" | "import" | "automatic";
 
@@ -37,7 +55,7 @@ export interface AuditEntry {
 export function recordAudit(entry: AuditEntry): void {
   // 1. Write to the existing JSON-backed governance audit log (always works)
   appendGovernanceAudit({
-    area: entry.entityType,
+    area: toGovernanceArea(entry.entityType),
     entityId: entry.entityId,
     action: entry.action,
     actorName: entry.actorName ?? entry.actorEmail,

@@ -1,0 +1,6 @@
+[deploy]
+startCommand = "npm run start:cloud"
+healthcheckPath = "/api/time/sast"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
