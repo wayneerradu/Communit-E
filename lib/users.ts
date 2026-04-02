@@ -1,6 +1,20 @@
-import type { SessionUser } from "@/types/domain";
+import type { Role, SessionUser } from "@/types/domain";
 import { isDatabaseConfigured, prisma } from "@/lib/prisma";
 import { toSessionUser } from "@/lib/identity";
+
+// The domain Role type includes "RESIDENT" for legacy reasons, but the Prisma
+// schema only stores admin-facing roles. Map any unknown/legacy value to ADMIN.
+type PrismaRole = "SUPER_ADMIN" | "ADMIN" | "PRO";
+
+function toPrismaRole(role: Role): PrismaRole {
+  if (role === "SUPER_ADMIN" || role === "PRO") return role;
+  return "ADMIN"; // covers "ADMIN" and legacy "RESIDENT"
+}
+
+function toDomainRole(role: string): Role {
+  if (role === "SUPER_ADMIN" || role === "PRO") return role;
+  return "ADMIN";
+}
 
 export async function findUserByEmail(email: string): Promise<SessionUser | null> {
   if (!isDatabaseConfigured()) {
@@ -20,7 +34,7 @@ export async function findUserByEmail(email: string): Promise<SessionUser | null
       id: user.id,
       email: user.email,
       name: user.name,
-      role: user.role
+      role: toDomainRole(user.role)
     };
   } catch {
     return null;
@@ -39,12 +53,12 @@ export async function upsertWorkspaceUser(email: string, name?: string) {
       where: { email: sessionUser.email },
       update: {
         name: sessionUser.name,
-        role: sessionUser.role
+        role: toPrismaRole(sessionUser.role)
       },
       create: {
         email: sessionUser.email,
         name: sessionUser.name,
-        role: sessionUser.role
+        role: toPrismaRole(sessionUser.role)
       }
     });
 
@@ -52,7 +66,7 @@ export async function upsertWorkspaceUser(email: string, name?: string) {
       id: user.id,
       email: user.email,
       name: user.name,
-      role: user.role
+      role: toDomainRole(user.role)
     } satisfies SessionUser;
   } catch {
     return sessionUser;
