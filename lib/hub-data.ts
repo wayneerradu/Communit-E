@@ -36,6 +36,8 @@ function mapResidentStatus(status: string): Resident["status"] {
       return "active";
     case "REJECTED":
       return "rejected";
+    case "LEAVER":
+      return "archived"; // domain type doesn't have leaver yet — treat as archived for display
     case "ARCHIVED":
     default:
       return "archived";
@@ -44,16 +46,17 @@ function mapResidentStatus(status: string): Resident["status"] {
 
 function mapFaultStatus(status: string): Fault["status"] {
   switch (status) {
+    // Legacy values (old schema) — kept for any data that hasn't been migrated
     case "REPORTED":
-      return "escalated";
     case "ASSIGNED":
+      return "escalated";
+    case "FIXED":
+      return "closed";
+    // Current enum values (new schema)
+    case "ESCALATED":
       return "escalated";
     case "IN_PROGRESS":
       return "in-progress";
-    case "FIXED":
-      return "closed";
-    case "ESCALATED":
-      return "escalated";
     case "CLOSED":
       return "closed";
     case "ARCHIVED":
@@ -79,13 +82,13 @@ function mapFaultPriority(priority: string): Fault["priority"] {
 function mapResidentRecord(resident: {
   id: string;
   name: string;
-  standNo: string;
+  standNo: string | null;
   email: string | null;
   phone: string | null;
   status: string;
   ward: string | null;
   addressLine1: string | null;
-  suburb: string | null;
+  suburb: string;
   latitude: number | null;
   longitude: number | null;
   profilePic: string | null;
@@ -94,7 +97,7 @@ function mapResidentRecord(resident: {
   return {
     id: resident.id,
     name: resident.name,
-    standNo: resident.standNo,
+    standNo: resident.standNo ?? "",
     email: resident.email ?? undefined,
     phone: resident.phone ?? undefined,
     status: mapResidentStatus(resident.status),
@@ -246,7 +249,9 @@ export async function getDashboardData(userEmail?: string) {
       id: item.id,
       title: item.title,
       meetingAt: item.meetingAt.toISOString(),
-      attendees: item.attendees.split(",").map((entry) => entry.trim()).filter(Boolean),
+      attendees: Array.isArray(item.attendees)
+        ? item.attendees
+        : (item.attendees as string).split(",").map((e) => e.trim()).filter(Boolean),
       notes: item.notes,
       actionItems: []
     }));
