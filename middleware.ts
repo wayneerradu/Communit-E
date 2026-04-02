@@ -126,7 +126,7 @@ function isLikelyAutomatedUserAgent(userAgent: string) {
   ].some((token) => lowered.includes(token));
 }
 
-function getAllowedOrigins() {
+function getAllowedOrigins(runtimeOrigin?: string) {
   const configured = (process.env.PUBLIC_ALLOWED_ORIGINS ?? "")
     .split(",")
     .map((item) => item.trim())
@@ -140,6 +140,7 @@ function getAllowedOrigins() {
 
   const appUrl = process.env.APP_URL?.trim();
   if (appUrl) defaults.push(appUrl);
+  if (runtimeOrigin) defaults.push(runtimeOrigin);
 
   return new Set([...defaults, ...configured]);
 }
@@ -262,7 +263,7 @@ export function middleware(request: NextRequest) {
 
     const origin = request.headers.get("origin");
     if (origin) {
-      const allowedOrigins = getAllowedOrigins();
+      const allowedOrigins = getAllowedOrigins(request.nextUrl.origin);
       if (!allowedOrigins.has(origin)) {
         return blockedResponse(request, 403, "Untrusted origin.");
       }
@@ -275,7 +276,7 @@ export function middleware(request: NextRequest) {
     isMutationMethod(method) &&
     !isCsrfExemptPath(pathname)
   ) {
-    const allowedOrigins = getAllowedOrigins();
+    const allowedOrigins = getAllowedOrigins(request.nextUrl.origin);
     const origin = request.headers.get("origin")?.trim() ?? null;
     const refererOrigin = getOriginFromReferer(request.headers.get("referer"));
     const sourceOrigin = origin ?? refererOrigin;
