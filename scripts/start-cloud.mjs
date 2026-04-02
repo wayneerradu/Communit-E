@@ -130,10 +130,15 @@ await waitForDB(
 const prismaBin = process.platform === "win32" ? "prisma.cmd" : "prisma";
 
 try {
-  try {
-    execSync("npx prisma migrate resolve --rolled-back 0002_align_schema", { stdio: "inherit" });
-  } catch (e) {
-    // already resolved, safe to ignore
+  // One-time fix: clear stuck migrations - remove after first successful deploy
+  const migrationsToResolve = ["0002_align_schema"];
+  for (const m of migrationsToResolve) {
+    try {
+      execSync(`npx prisma migrate resolve --rolled-back ${m}`, { stdio: "inherit" });
+      console.log(`[start:cloud] Resolved rolled-back migration: ${m}`);
+    } catch (e) {
+      // already resolved or doesn't exist - safe to ignore
+    }
   }
 
   await run(prismaBin, ["migrate", "deploy"], process.env);
