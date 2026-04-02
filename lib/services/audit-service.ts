@@ -10,6 +10,7 @@
 
 import { appendGovernanceAudit, type GovernanceAuditEntry } from "@/lib/governance-audit-store";
 import { isDatabaseConfigured, prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 type GovernanceArea = GovernanceAuditEntry["area"];
 
@@ -76,8 +77,8 @@ export function recordAudit(entry: AuditEntry): void {
           entityType: entry.entityType,
           entityId: entry.entityId,
           description: entry.description,
-          before: entry.before ?? undefined,
-          after: entry.after ?? undefined,
+          before: entry.before !== undefined ? (entry.before as Prisma.InputJsonValue) : undefined,
+          after: entry.after !== undefined ? (entry.after as Prisma.InputJsonValue) : undefined,
           source: entry.source ?? "manual",
           reason: entry.reason,
           faultId: entry.faultId,
