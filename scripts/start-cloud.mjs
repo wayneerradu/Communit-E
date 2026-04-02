@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { execSync, spawn } from "node:child_process";
 import pg from "pg";
 
 console.log(process.env.DATABASE_URL ? process.env.DATABASE_URL.slice(0, 20) : "MISSING");
@@ -130,6 +130,12 @@ await waitForDB(
 const prismaBin = process.platform === "win32" ? "prisma.cmd" : "prisma";
 
 try {
+  try {
+    execSync("npx prisma migrate resolve --rolled-back 0002_align_schema", { stdio: "inherit" });
+  } catch (e) {
+    // already resolved, safe to ignore
+  }
+
   await run(prismaBin, ["migrate", "deploy"], process.env);
   await run("node", ["scripts/start.mjs"], process.env);
 } catch (error) {
