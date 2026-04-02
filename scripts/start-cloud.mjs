@@ -1,10 +1,18 @@
-import { execSync, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import pg from "pg";
 
-console.log(process.env.DATABASE_URL ? process.env.DATABASE_URL.slice(0, 20) : "MISSING");
+const DEFAULT_DB_WAIT_RETRIES = 10;
+const DEFAULT_DB_WAIT_DELAY_MS = 3000;
+const DEFAULT_ROLLED_BACK_MIGRATIONS = ["0002_align_schema"];
+
+function toPositiveInt(value, fallback) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
 
 function sanitizeDatabaseUrl(raw) {
   if (!raw) return "";
+
   let value = String(raw)
     // Remove hidden control/zero-width chars that can appear from copy/paste in cloud UIs.
     .replace(/[\u0000-\u001f\u007f\u200b\u200c\u200d\u2060\ufeff]/g, "")
@@ -51,6 +59,14 @@ function maskDatabaseUrl(url) {
   }
 }
 
+function parseRolledBackMigrations() {
+  const fromEnv = (process.env.PRISMA_ROLLED_BACK_MIGRATIONS ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  return fromEnv.length > 0 ? fromEnv : DEFAULT_ROLLED_BACK_MIGRATIONS;
+}
+
 function run(command, args, env) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
@@ -64,10 +80,12 @@ function run(command, args, env) {
         reject(new Error(`${command} terminated by signal ${signal}`));
         return;
       }
+
       if (code !== 0) {
         reject(new Error(`${command} exited with code ${code}`));
         return;
       }
+
       resolve();
     });
   });
@@ -77,7 +95,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function waitForDB(connectionString, retries = 10, delayMs = 3000) {
+async function waitForDB(connectionString, retries, delayMs) {
   for (let attempt = 1; attempt <= retries; attempt += 1) {
     const pool = new pg.Pool({
       connectionString,
@@ -92,9 +110,7 @@ async function waitForDB(connectionString, retries = 10, delayMs = 3000) {
       return;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      console.log(
-        `[start:cloud] DB not ready, retrying in ${Math.round(delayMs / 1000)}s... (${attempt}/${retries}) - ${message}`
-      );
+      console.log(`[start:cloud] DB not ready (${attempt}/${retries}) - ${message}`);
       await pool.end();
       if (attempt < retries) {
         await sleep(delayMs);
@@ -105,45 +121,46 @@ async function waitForDB(connectionString, retries = 10, delayMs = 3000) {
   throw new Error("Could not connect to database after multiple retries.");
 }
 
-const resolved = resolveDatabaseUrlFromEnv();
-const sanitized = resolved.value;
-
-if (!sanitized || (!sanitized.startsWith("postgres://") && !sanitized.startsWith("postgresql://"))) {
-  console.error("[start:cloud] Invalid DATABASE_URL after sanitization.");
-  console.error("[start:cloud] Expected postgres:// or postgresql://");
-  console.error(`[start:cloud] Current value: ${maskDatabaseUrl(sanitized)}`);
-  process.exit(1);
-}
-
-process.env.DATABASE_URL = sanitized;
-console.log(`[start:cloud] DATABASE_URL source: ${resolved.source}`);
-console.log(`[start:cloud] DATABASE_URL accepted: ${maskDatabaseUrl(sanitized)}`);
-
-const dbWaitRetries = Number.parseInt(process.env.DB_WAIT_RETRIES ?? "10", 10);
-const dbWaitDelayMs = Number.parseInt(process.env.DB_WAIT_DELAY_MS ?? "3000", 10);
-await waitForDB(
-  sanitized,
-  Number.isFinite(dbWaitRetries) && dbWaitRetries > 0 ? dbWaitRetries : 10,
-  Number.isFinite(dbWaitDelayMs) && dbWaitDelayMs > 0 ? dbWaitDelayMs : 3000
-);
-
-const prismaBin = process.platform === "win32" ? "prisma.cmd" : "prisma";
-
-try {
-  // One-time fix: clear stuck migrations - remove after first successful deploy
-  const migrationsToResolve = ["0002_align_schema"];
-  for (const m of migrationsToResolve) {
+async function resolveKnownRolledBackMigrations(prismaBin, env) {
+  const migrations = parseRolledBackMigrations();
+  for (const migration of migrations) {
     try {
-      execSync(`npx prisma migrate resolve --rolled-back ${m}`, { stdio: "inherit" });
-      console.log(`[start:cloud] Resolved rolled-back migration: ${m}`);
-    } catch (e) {
-      // already resolved or doesn't exist - safe to ignore
+      await run(prismaBin, ["migrate", "resolve", "--rolled-back", migration], env);
+      console.log(`[start:cloud] Resolved rolled-back migration: ${migration}`);
+    } catch {
+      // Already resolved or not present - safe to ignore.
     }
   }
+}
 
+async function main() {
+  const { value: databaseUrl, source } = resolveDatabaseUrlFromEnv();
+  const isValidProtocol =
+    databaseUrl.startsWith("postgres://") || databaseUrl.startsWith("postgresql://");
+
+  if (!databaseUrl || !isValidProtocol) {
+    console.error("[start:cloud] Invalid DATABASE_URL after sanitization.");
+    console.error("[start:cloud] Expected postgres:// or postgresql://");
+    console.error(`[start:cloud] Current value: ${maskDatabaseUrl(databaseUrl)}`);
+    process.exit(1);
+  }
+
+  process.env.DATABASE_URL = databaseUrl;
+  console.log(`[start:cloud] DATABASE_URL source: ${source}`);
+  console.log(`[start:cloud] DATABASE_URL accepted: ${maskDatabaseUrl(databaseUrl)}`);
+
+  const retries = toPositiveInt(process.env.DB_WAIT_RETRIES, DEFAULT_DB_WAIT_RETRIES);
+  const delayMs = toPositiveInt(process.env.DB_WAIT_DELAY_MS, DEFAULT_DB_WAIT_DELAY_MS);
+  await waitForDB(databaseUrl, retries, delayMs);
+
+  const prismaBin = process.platform === "win32" ? "prisma.cmd" : "prisma";
+  await resolveKnownRolledBackMigrations(prismaBin, process.env);
   await run(prismaBin, ["migrate", "deploy"], process.env);
   await run("node", ["scripts/start.mjs"], process.env);
-} catch (error) {
-  console.error(`[start:cloud] ${error.message}`);
-  process.exit(1);
 }
+
+main().catch((error) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(`[start:cloud] ${message}`);
+  process.exit(1);
+});
